@@ -1,3 +1,5 @@
+from Point import Point
+
 class Robot:
     size: int
     position_x: int
@@ -8,7 +10,9 @@ class Robot:
         self.size = size
         self.position_x = position_x
         self.position_y = position_y
-        self.path = path
+        self.path = [Point(position_x, position_y)]
+        for point in path:
+            self.path.append(point)
 
 
     def printRobot(self):

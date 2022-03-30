@@ -1,11 +1,13 @@
+from re import S
 from Point import Point
 from Robot import Robot
 from Grid import Grid
-from Graph import Graph
 import math
 import copy
 from xml.etree.ElementTree import iselement
 import matplotlib.pyplot as plt
+from ortools.constraint_solver import routing_enums_pb2
+from ortools.constraint_solver import pywrapcp
 
 
 class Manager:
@@ -14,9 +16,12 @@ class Manager:
 
     def __init__(self, file):
         self.grid, self.robots = self.readConfiguration(file)
-        self.shortestPathEuclidean()
+        self.manage()
 
-    def readConfiguration(file):
+        for robot in self.robots:
+            robot.printRobot()
+
+    def readConfiguration(self, file):
         with open(file,'r') as f:
             lines = f.readlines()
 
@@ -62,33 +67,149 @@ class Manager:
             print("not given grid or robots!")
             return 0, 0
 
-    def EuclideanAlgorithm(self, point1, point2):   # TO DO end-point liczyć do krawędzi i jako 1 punkt będzie pozycja robota więc to też trzeba liczyć
-        return math.sqrt(math.pow(point1.x - point2.x, 2) + math.pow(point1.y - point2.y, 2))
+    def findClosestEdge(self, point):
+        x_size = self.grid.x_cells*self.grid.cell_size
+        y_size = self.grid.y_cells*self.grid.cell_size
+        if min(point.x, x_size-point.x) < min(point.y, y_size-point.y):
+            if point.x < x_size-point.x:
+                x_size = 0
+            else:
+                x_size = x_size
+            y_size = point.y
+        else:
+            if point.y < y_size-point.y:
+                y_size = 0
+            else:
+                y_size = y_size
+            x_size = point.x
+        return Point(x_size, y_size)
 
-    def ManhattanAlgorithm(self, point1, point2):   # TO DO end-point liczyć do krawędzi i jako 1 punkt będzie pozycja robota więc to też trzeba liczyć
-        return abs(point1.x - point2.x) + abs(point1.y - point2.y)
+    def manage(self):
+        """Entry point of the program."""
+        # Instantiate the data problem.
+        for robot in self.robots:
+            data = create_data_model(robot)
 
-    def findClosestEdge(self, point):               # TO DO tu policzyć odległości do krawędzi i zwrócić punkt, gdzie jest najkrótsze
-        pass
+            # Create the routing index manager.
+            manager = pywrapcp.RoutingIndexManager(len(data['locations']),
+                                                data['num_vehicles'], data['depot'])
+
+            # Create Routing Model.
+            routing = pywrapcp.RoutingModel(manager)
+
+            distance_matrix = compute_euclidean_distance_matrix(data['locations'])
+            # distance_matrix = compute_manhattan_distance_matrix(data['locations'])
             
 
-    def shortestPathEuclidean(self):
-        for robot in self.robots:
-            path = []
-            path.append(Point(robot.position_x, robot.position_y))
-            path += robot.path
-            for point in robot.path:
-                end = self.findClosestEdge(point)
-                path.append(end)
-            graph = Graph(len(path))
-            for point1 in range(0, len(path)):
-                for point2 in range(point1+1, len(path)):
-                    value = self.EuclideanAlgorithm(path[point1], path[point2])
-                    graph.add_edge(point1, point2, value)
-                    graph.add_edge(point2, point1, value)
-            D = graph.dijkstra(0)
-            print(D[len(path)-1])
-            robot.path = path
+            def distance_callback(from_index, to_index):
+                """Returns the distance between the two nodes."""
+                # Convert from routing variable Index to distance matrix NodeIndex.
+                from_node = manager.IndexToNode(from_index)
+                to_node = manager.IndexToNode(to_index)
+                return distance_matrix[from_node][to_node]
 
-    def shortestPathManhattan(self):
-        pass
+            transit_callback_index = routing.RegisterTransitCallback(distance_callback)
+
+            # Define cost of each arc.
+            routing.SetArcCostEvaluatorOfAllVehicles(transit_callback_index)
+
+            # Setting first solution heuristic.
+            search_parameters = pywrapcp.DefaultRoutingSearchParameters()
+            search_parameters.first_solution_strategy = (
+                routing_enums_pb2.FirstSolutionStrategy.PATH_CHEAPEST_ARC)
+
+            # Solve the problem.
+            solution = routing.SolveWithParameters(search_parameters)
+
+            indexes = valuesReturn(manager, routing, solution)
+            path = []
+            for idx in indexes:
+                path.append(Point(data['locations'][idx][0], data['locations'][idx][1]))
+            path.append(self.findClosestEdge(path[len(path)-1]))
+            # for p in path:
+            #     p.printp()
+            robot.path = path
+            # Print solution on console.
+            # if solution:
+            #     print_solution(manager, routing, solution)
+  
+
+def create_data_model(robot:Robot):
+    """Stores the data for the problem."""
+    data = {}
+    # Locations in block units
+    data['locations'] = []
+    path = robot.path
+    for point1 in path:
+       # point1.printp()
+        data['locations'].append((point1.x, point1.y))
+    # print(data)
+
+    data['num_vehicles'] = 1
+    data['depot'] = 0
+    return data
+
+
+def compute_euclidean_distance_matrix(locations):
+    """Creates callback to return distance between points."""
+    distances = {}
+    first = locations[0]
+    for from_counter, from_node in enumerate(locations):
+        distances[from_counter] = {}
+        for to_counter, to_node in enumerate(locations):
+            if from_counter == to_counter:
+                distances[from_counter][to_counter] = 0
+            else:
+                # Euclidean distance
+                if to_node == first:
+                    distances[from_counter][to_counter] = 0
+                else:
+                    distances[from_counter][to_counter] = (int(
+                    math.hypot((from_node[0] - to_node[0]),
+                               (from_node[1] - to_node[1]))))
+    return distances
+
+
+def compute_manhattan_distance_matrix(locations):
+    """Creates callback to return distance between points."""
+    distances = {}
+    first = locations[0]
+    for from_counter, from_node in enumerate(locations):
+        distances[from_counter] = {}
+        for to_counter, to_node in enumerate(locations):
+            if from_counter == to_counter:
+                distances[from_counter][to_counter] = 0
+            else:
+                # Manhattan distance
+                if to_node == first:
+                    distances[from_counter][to_counter] = 0
+                else:
+                    distances[from_counter][to_counter] = abs(from_node[0] - to_node[0]) + abs(from_node[1] - to_node[1])
+    return distances
+
+
+def print_solution(manager, routing, solution):
+    """Prints solution on console."""
+    print('Objective: {}'.format(solution.ObjectiveValue()))
+    index = routing.Start(0)
+    plan_output = 'Route:\n'
+    route_distance = 0
+    while not routing.IsEnd(index):
+        plan_output += ' {} ->'.format(manager.IndexToNode(index))
+        previous_index = index
+        index = solution.Value(routing.NextVar(index))
+        route_distance += routing.GetArcCostForVehicle(previous_index, index, 0)
+    plan_output += ' {}\n'.format(manager.IndexToNode(index))
+    print(plan_output)
+    plan_output += 'Objective: {}m\n'.format(route_distance)
+
+
+def valuesReturn(manager, routing, solution):
+    index = routing.Start(0)
+    plan_output = []
+    while not routing.IsEnd(index):
+        plan_output.append(manager.IndexToNode(index))
+        index = solution.Value(routing.NextVar(index))
+    return plan_output
+
+
