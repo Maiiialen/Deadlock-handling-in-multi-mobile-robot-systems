@@ -8,6 +8,8 @@ from xml.etree.ElementTree import iselement
 import matplotlib.pyplot as plt
 from ortools.constraint_solver import routing_enums_pb2
 from ortools.constraint_solver import pywrapcp
+import matplotlib
+from matplotlib import pyplot as plt, patches
 
 
 class Manager:
@@ -17,6 +19,7 @@ class Manager:
     def __init__(self, file):
         self.grid, self.robots = self.readConfiguration(file)
         self.manage()
+        self.print()
 
         for robot in self.robots:
             robot.printRobot()
@@ -133,7 +136,20 @@ class Manager:
             # if solution:
             #     print_solution(manager, routing, solution)
   
-
+    def print(self):
+        plt.rcParams["figure.figsize"] = [self.grid.cell_size*self.grid.x_cells/1000, self.grid.cell_size*self.grid.y_cells/1000]
+        plt.rcParams["figure.autolayout"] = True
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        for idx_x in range(0, self.grid.x_cells):
+            x = idx_x*self.grid.cell_size/1000
+            for idx_y in range(0, self.grid.y_cells):
+                ax.add_patch(patches.Rectangle((x, idx_y*self.grid.cell_size/1000), self.grid.cell_size/1000, self.grid.cell_size/1000, edgecolor="black", linewidth=1))
+        for robot in self.robots:
+            ax.add_patch(patches.Circle((robot.position_x/1000, robot.position_y/1000), radius=robot.size/2000, color="red"))
+        plt.axis('equal')
+        plt.show()
+        
 def create_data_model(robot:Robot):
     """Stores the data for the problem."""
     data = {}
