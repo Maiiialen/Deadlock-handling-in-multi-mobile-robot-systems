@@ -1,4 +1,5 @@
-from re import S
+from re import I, S
+from turtle import delay
 from Point import Point
 from Robot import Robot
 from Grid import Grid
@@ -19,10 +20,18 @@ class Manager:
     def __init__(self, file):
         self.grid, self.robots = self.readConfiguration(file)
         self.manage()
-        self.print()
+        while True:
+            self.move()
+            if len(self.robots) == 0:
+                print("Done")
+                i = 0
+                while i < 10:
+                    self.print()
+                    i += 1
+                break
 
-        for robot in self.robots:
-            robot.printRobot()
+        # for robot in self.robots:
+        #     robot.printRobot()
 
     def readConfiguration(self, file):
         with open(file,'r') as f:
@@ -132,23 +141,44 @@ class Manager:
             # for p in path:
             #     p.printp()
             robot.path = path
-            # Print solution on console.
-            # if solution:
-            #     print_solution(manager, routing, solution)
+
+    def move(self):
+        self.print()
+        for robot in self.robots:
+            new_point = robot.calculateMove()
+            # new_point.printp()
+            if len(robot.path) == 0:
+                self.robots.remove(robot)
+            else:
+                robot.move(new_point)
   
     def print(self):
+        plt.clf()
         plt.rcParams["figure.figsize"] = [self.grid.cell_size*self.grid.x_cells/1000, self.grid.cell_size*self.grid.y_cells/1000]
         plt.rcParams["figure.autolayout"] = True
-        fig = plt.figure()
+        fig = plt.figure(1)
         ax = fig.add_subplot(111)
+        col = ("black", "white")
+        i = 0
         for idx_x in range(0, self.grid.x_cells):
             x = idx_x*self.grid.cell_size/1000
+            i += 1
+            i %= 2
+            j = i
             for idx_y in range(0, self.grid.y_cells):
-                ax.add_patch(patches.Rectangle((x, idx_y*self.grid.cell_size/1000), self.grid.cell_size/1000, self.grid.cell_size/1000, edgecolor="black", linewidth=1))
+                ax.add_patch(patches.Rectangle((x, idx_y*self.grid.cell_size/1000), self.grid.cell_size/1000, self.grid.cell_size/1000, color = col[j]))
+                j += 1
+                j %= 2
+        col = ("b", "gold", "aqua", "salmon")
+        i = 0
         for robot in self.robots:
             ax.add_patch(patches.Circle((robot.position_x/1000, robot.position_y/1000), radius=robot.size/2000, color="red"))
+            for point in robot.path:
+                ax.add_patch(patches.Circle((point.x/1000, point.y/1000), radius=0.1, color=col[i]))
+            i += 1
         plt.axis('equal')
-        plt.show()
+        plt.draw()
+        plt.pause(0.001)
         
 def create_data_model(robot:Robot):
     """Stores the data for the problem."""
