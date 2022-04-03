@@ -20,7 +20,7 @@ class Manager:
     def __init__(self, file):
         self.grid, self.robots = self.readConfiguration(file)
         for robot in self.robots:
-            self.grid.addRobotPosition(robot)
+            self.grid.addRobotPosition(robot, Point(robot.position_x, robot.position_y))
         self.findShortestPath()
         self.manage()
 
@@ -151,15 +151,18 @@ class Manager:
         for robot in self.robots:
             new_point = robot.calculateMove()
             if len(robot.path) == 0:
+                self.grid.removeRobotPosition(robot)
                 self.robots.remove(robot)
             else:
                 if(self.grid.updateRobotPosition(robot, new_point)):
-                    print("wykonany")
                     robot.move(new_point)
+                    robot.blocked = 0
                 else:
-                    print("pominięty x: " + str(robot.position_x) + " ,y: " + str(robot.position_y))
-                    new_point.printp()
-        self.grid.printGrid()
+                    robot.blocked += 1
+                    print("blocked")
+                    if robot.blocked == 5:
+                        self.grid.removeRobotPosition(robot)
+                        self.robots.remove(robot)
   
     def print(self):
         plt.clf()

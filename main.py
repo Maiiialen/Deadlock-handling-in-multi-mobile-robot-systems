@@ -2,5 +2,5 @@
 from Manager import Manager
           
 if __name__ == '__main__':
-    manager = Manager("grid4.txt")
+    manager = Manager("grid5.txt")
     exit()
