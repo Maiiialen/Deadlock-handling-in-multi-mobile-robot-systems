@@ -97,28 +97,43 @@ class Grid:
 
         if temp_grid[x][y] > 0:
             return False
-        if temp_grid[x][y] < 1:
-            temp_grid[x][y] += 1
-            if new_position.x < x*self.cell_size + robot.size//2 and x > 0:
-                temp_grid[x-1][y] += 1
-                if new_position.y < y*self.cell_size + robot.size//2 and y > 0:
-                    temp_grid[x][y-1] += 1
-                    temp_grid[x-1][y-1] += 1
-                elif new_position.y > (y+1)*self.cell_size - robot.size//2 and y < self.y_cells:
-                    temp_grid[x][y+1] += 1
-                    temp_grid[x-1][y+1] += 1
-            elif new_position.x > (x+1)*self.cell_size - robot.size//2 and x < self.x_cells:
-                temp_grid[x+1][y] += 1
-                if new_position.y < y*self.cell_size + robot.size//2 and y > 0:
-                    temp_grid[x][y-1] += 1
-                    temp_grid[x+1][y-1] += 1
-                elif new_position.y > (y+1)*self.cell_size - robot.size//2 and y < self.y_cells:
-                    temp_grid[x][y+1] += 1
-                    temp_grid[x+1][y+1] += 1
-            elif new_position.y < y*self.cell_size + robot.size//2 and y > 0:
+        temp_grid[x][y] += 1
+        if new_position.x < x*self.cell_size + robot.size//2 and x > 0:
+            if temp_grid[x-1][y] > 0:
+                return False
+            temp_grid[x-1][y] += 1
+            if new_position.y < y*self.cell_size + robot.size//2 and y > 0:
+                if temp_grid[x][y-1] > 0 or temp_grid[x-1][y-1] > 0:
+                    return False
                 temp_grid[x][y-1] += 1
+                temp_grid[x-1][y-1] += 1
             elif new_position.y > (y+1)*self.cell_size - robot.size//2 and y < self.y_cells:
+                if temp_grid[x][y+1] > 0 or temp_grid[x-1][y+1] > 0:
+                    return False
                 temp_grid[x][y+1] += 1
+                temp_grid[x-1][y+1] += 1
+        elif new_position.x > (x+1)*self.cell_size - robot.size//2 and x < self.x_cells:
+            if temp_grid[x+1][y] > 0:
+                return False
+            temp_grid[x+1][y] += 1
+            if new_position.y < y*self.cell_size + robot.size//2 and y > 0:
+                if temp_grid[x][y-1] > 0 or temp_grid[x+1][y-1] > 0:
+                    return False
+                temp_grid[x][y-1] += 1
+                temp_grid[x+1][y-1] += 1
+            elif new_position.y > (y+1)*self.cell_size - robot.size//2 and y < self.y_cells:
+                if temp_grid[x][y+1] > 0 or temp_grid[x+1][y+1] > 0:
+                    return False
+                temp_grid[x][y+1] += 1
+                temp_grid[x+1][y+1] += 1
+        elif new_position.y < y*self.cell_size + robot.size//2 and y > 0:
+            if temp_grid[x][y-1] > 0:
+                return False
+            temp_grid[x][y-1] += 1
+        elif new_position.y > (y+1)*self.cell_size - robot.size//2 and y < self.y_cells:
+            if temp_grid[x][y+1] > 0:
+                return False
+            temp_grid[x][y+1] += 1
         self.grid = temp_grid
         # print("PLUSES")
         # self.printTempGrid(temp_grid)
