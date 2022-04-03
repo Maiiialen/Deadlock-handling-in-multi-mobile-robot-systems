@@ -19,19 +19,12 @@ class Manager:
 
     def __init__(self, file):
         self.grid, self.robots = self.readConfiguration(file)
+        for robot in self.robots:
+            self.grid.addRobotPosition(robot)
+        self.findShortestPath()
         self.manage()
-        while True:
-            self.move()
-            if len(self.robots) == 0:
-                print("Done")
-                i = 0
-                while i < 10:
-                    self.print()
-                    i += 1
-                break
 
-        # for robot in self.robots:
-        #     robot.printRobot()
+
 
     def readConfiguration(self, file):
         with open(file,'r') as f:
@@ -96,7 +89,7 @@ class Manager:
             x_size = point.x
         return Point(x_size, y_size)
 
-    def manage(self):
+    def findShortestPath(self):
         """Entry point of the program."""
         # Instantiate the data problem.
         for robot in self.robots:
@@ -142,15 +135,31 @@ class Manager:
             #     p.printp()
             robot.path = path
 
+    def manage(self):
+        while True:
+            self.move()
+            if len(self.robots) == 0:
+                print("Done")
+                i = 0
+                while i < 10:
+                    self.print()
+                    i += 1
+                break
+
     def move(self):
         self.print()
         for robot in self.robots:
             new_point = robot.calculateMove()
-            # new_point.printp()
             if len(robot.path) == 0:
                 self.robots.remove(robot)
             else:
-                robot.move(new_point)
+                if(self.grid.updateRobotPosition(robot, new_point)):
+                    print("wykonany")
+                    robot.move(new_point)
+                else:
+                    print("pominięty x: " + str(robot.position_x) + " ,y: " + str(robot.position_y))
+                    new_point.printp()
+        self.grid.printGrid()
   
     def print(self):
         plt.clf()
@@ -178,7 +187,8 @@ class Manager:
             i += 1
         plt.axis('equal')
         plt.draw()
-        plt.pause(0.001)
+        plt.pause(0.5)
+        # plt.pause(0.001)
         
 def create_data_model(robot:Robot):
     """Stores the data for the problem."""

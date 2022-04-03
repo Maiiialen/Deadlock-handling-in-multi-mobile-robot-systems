@@ -1,7 +1,7 @@
 from Point import Point
 import math
 
-ROBOT_SPEED = 200     # mm/s(clock's pic)
+ROBOT_SPEED = 1000     # mm/s(clock's pic)
 
 class Robot:
     size: int
