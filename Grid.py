@@ -8,12 +8,14 @@ class Grid:
     x_cells: int
     y_cells: int
     cell_size: int
+    cell_capacity: int
     grid: list
 
-    def __init__(self, x_cells, y_cells, cell_size):
+    def __init__(self, x_cells, y_cells, cell_size, cell_capacity):
         self.x_cells = x_cells
         self.y_cells = y_cells
         self.cell_size = cell_size
+        self.cell_capacity = cell_capacity
 
         self.grid = []
         for _ in range(0, self.x_cells):
@@ -39,43 +41,43 @@ class Grid:
         x = new_position.x//self.cell_size
         y = new_position.y//self.cell_size
 
-        if self.grid[x][y] > 0:
+        if self.grid[x][y] >= self.cell_capacity:
             return False
         self.grid[x][y] += 1
         if new_position.x < x*self.cell_size + robot.size//2 and x > 0:
-            if self.grid[x-1][y] > 0:
+            if self.grid[x-1][y] >= self.cell_capacity:
                 return False
             self.grid[x-1][y] += 1
             if new_position.y < y*self.cell_size + robot.size//2 and y > 0:
-                if self.grid[x][y-1] > 0 or self.grid[x-1][y-1] > 0:
+                if self.grid[x][y-1] >= self.cell_capacity or self.grid[x-1][y-1] >= self.cell_capacity:
                     return False
                 self.grid[x][y-1] += 1
                 self.grid[x-1][y-1] += 1
             elif new_position.y > (y+1)*self.cell_size - robot.size//2 and y < self.y_cells:
-                if self.grid[x][y+1] > 0 or self.grid[x-1][y+1] > 0:
+                if self.grid[x][y+1] >= self.cell_capacity or self.grid[x-1][y+1] >= self.cell_capacity:
                     return False
                 self.grid[x][y+1] += 1
                 self.grid[x-1][y+1] += 1
         elif new_position.x > (x+1)*self.cell_size - robot.size//2 and x < self.x_cells:
-            if self.grid[x+1][y] > 0:
+            if self.grid[x+1][y] >= self.cell_capacity:
                 return False
             self.grid[x+1][y] += 1
             if new_position.y < y*self.cell_size + robot.size//2 and y > 0:
-                if self.grid[x][y-1] > 0 or self.grid[x+1][y-1] > 0:
+                if self.grid[x][y-1] >= self.cell_capacity or self.grid[x+1][y-1] >= self.cell_capacity:
                     return False
                 self.grid[x][y-1] += 1
                 self.grid[x+1][y-1] += 1
             elif new_position.y > (y+1)*self.cell_size - robot.size//2 and y < self.y_cells:
-                if self.grid[x][y+1] > 0 or self.grid[x+1][y+1] > 0:
+                if self.grid[x][y+1] >= self.cell_capacity or self.grid[x+1][y+1] >= self.cell_capacity:
                     return False
                 self.grid[x][y+1] += 1
                 self.grid[x+1][y+1] += 1
         elif new_position.y < y*self.cell_size + robot.size//2 and y > 0:
-            if self.grid[x][y-1] > 0:
+            if self.grid[x][y-1] >= self.cell_capacity:
                 return False
             self.grid[x][y-1] += 1
         elif new_position.y > (y+1)*self.cell_size - robot.size//2 and y < self.y_cells:
-            if self.grid[x][y+1] > 0:
+            if self.grid[x][y+1] >= self.cell_capacity:
                 return False
             self.grid[x][y+1] += 1
         return True

@@ -11,17 +11,25 @@ from ortools.constraint_solver import routing_enums_pb2
 from ortools.constraint_solver import pywrapcp
 import matplotlib
 from matplotlib import pyplot as plt, patches
-
+import numpy
 
 class Manager:
     grid: Grid
     robots: list
+    colors: list
+    cell_capacity: int
+    method: int
+    resources_management:int
 
-    def __init__(self, file):
+    def __init__(self, file, cell_capacity, method, resources_management):
+        self.cell_capacity = cell_capacity
+        self.method = method
+        self.resources_management = resources_management
         self.grid, self.robots = self.readConfiguration(file)
         for robot in self.robots:
             self.grid.addRobotPosition(robot, Point(robot.position_x, robot.position_y))
         self.findShortestPath()
+        self.colorsGenerator()
         self.manage()
 
 
@@ -39,7 +47,7 @@ class Manager:
         for line in lines:
             data = line.split(" ")
             if not isGrid and data[0] == 'g':
-                grid = Grid(int(data[1]), int(data[2]), int(data[3]))
+                grid = Grid(int(data[1]), int(data[2]), int(data[3]), self.cell_capacity)
                 isGrid = True
             elif not isRobot and data[0] == 'r':
                 values.append(int(data[1]))
@@ -102,7 +110,10 @@ class Manager:
             # Create Routing Model.
             routing = pywrapcp.RoutingModel(manager)
 
-            distance_matrix = compute_euclidean_distance_matrix(data['locations'])
+            if self.method == 0:
+                distance_matrix = compute_euclidean_distance_matrix(data['locations'])
+            else:
+                distance_matrix = compute_manhattan_distance_matrix(data['locations'])
             # distance_matrix = compute_manhattan_distance_matrix(data['locations'])
             
 
@@ -135,35 +146,53 @@ class Manager:
             #     p.printp()
             robot.path = path
 
+    def willNotCollide(self, given_robot, new_point):
+        for robot in self.robots:
+            if not robot == given_robot:
+                if (int(math.hypot((new_point.x - robot.position_x),(new_point.y - robot.position_y)))) < given_robot.size:
+                    return False
+        return True
+                
+
     def manage(self):
         while True:
             self.move()
             if len(self.robots) == 0:
                 print("Done")
-                i = 0
-                while i < 10:
-                    self.print()
-                    i += 1
+                # i = 0
+                # while i < 10:
+                #     self.print()
+                #     i += 1
                 break
 
     def move(self):
         self.print()
         for robot in self.robots:
-            new_point = robot.calculateMove()
+            new_point = robot.calculateMove(self.method)
             if len(robot.path) == 0:
                 self.grid.removeRobotPosition(robot)
                 self.robots.remove(robot)
             else:
-                if(self.grid.updateRobotPosition(robot, new_point)):
-                    robot.move(new_point)
-                    robot.blocked = 0
+                if self.resources_management == 1:
+                    if self.willNotCollide(robot, new_point) and self.grid.updateRobotPosition(robot, new_point):
+                        robot.move(new_point)
+                        robot.blocked = 0
+                    else:
+                        robot.blocked += 1
+                        print("blocked")
                 else:
-                    robot.blocked += 1
-                    print("blocked")
-                    if robot.blocked == 5:
-                        self.grid.removeRobotPosition(robot)
-                        self.robots.remove(robot)
-  
+                    if self.willNotCollide(robot, new_point):
+                        robot.move(new_point)
+                        robot.blocked = 0
+                    else:
+                        robot.blocked += 1
+                        print("blocked")
+    
+    def colorsGenerator(self):
+        self.colors = []
+        for _ in self.robots:
+            self.colors.append(numpy.random.rand(3,))
+
     def print(self):
         plt.clf()
         plt.rcParams["figure.figsize"] = [self.grid.cell_size*self.grid.x_cells/1000, self.grid.cell_size*self.grid.y_cells/1000]
@@ -181,17 +210,16 @@ class Manager:
                 ax.add_patch(patches.Rectangle((x, idx_y*self.grid.cell_size/1000), self.grid.cell_size/1000, self.grid.cell_size/1000, color = col[j]))
                 j += 1
                 j %= 2
-        col = ("b", "gold", "aqua", "salmon")
+        # col = ("b", "gold", "aqua", "salmon", "olive", "c", "navy", "teal")
         i = 0
         for robot in self.robots:
-            ax.add_patch(patches.Circle((robot.position_x/1000, robot.position_y/1000), radius=robot.size/2000, color="red"))
+            ax.add_patch(patches.Circle((robot.position_x/1000, robot.position_y/1000), radius=robot.size/2000, color=self.colors[i]))
             for point in robot.path:
-                ax.add_patch(patches.Circle((point.x/1000, point.y/1000), radius=0.1, color=col[i]))
+                ax.add_patch(patches.Circle((point.x/1000, point.y/1000), radius=0.1, color=self.colors[i]))
             i += 1
         plt.axis('equal')
         plt.draw()
-        plt.pause(0.5)
-        # plt.pause(0.001)
+        plt.pause(0.001)
         
 def create_data_model(robot:Robot):
     """Stores the data for the problem."""
