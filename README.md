@@ -6,5 +6,5 @@ grid2 - 2 robots (for collision testing and resource management - short blockage
 grid3 - 2 robots (for collision testing and resource management - longer blockage for one of robots)
 grid4 - 5 robots
 grid5 - generated
-grid6 - to Manhattan - less robots
+grid6 - to Manhattan
 grid7 - to Manhattan - less robots

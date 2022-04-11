@@ -179,14 +179,14 @@ class Manager:
                         robot.blocked = 0
                     else:
                         robot.blocked += 1
-                        print("blocked")
+                        # print("blocked")
                 else:
                     if self.willNotCollide(robot, new_point):
                         robot.move(new_point)
                         robot.blocked = 0
                     else:
                         robot.blocked += 1
-                        print("blocked")
+                        # print("blocked")
     
     def colorsGenerator(self):
         self.colors = []
@@ -219,6 +219,7 @@ class Manager:
             i += 1
         plt.axis('equal')
         plt.draw()
+        # plt.pause(10)
         plt.pause(0.001)
         
 def create_data_model(robot:Robot):
