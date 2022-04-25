@@ -20,6 +20,7 @@ def generator(file):
 
     # robots
     robot_size = math.floor((random.randint(5, 9)/10) * cell_size)
+    robot_velocity = math.floor((random.randint(10, 50)))
     robots_number = random.randint(10, 100)
     for _ in range(0, robots_number):
         notCorrectPlace = True
@@ -34,7 +35,7 @@ def generator(file):
                     print(str(distance) + ", " + str(robot_size))
                     break
         robotPoints.append(Point(pos_x, pos_y))
-        line = "r " + str(robot_size) + " " + str(pos_x) + " " + str(pos_y)
+        line = "r " + str(robot_size) + " "+ str(robot_velocity) + " " + str(pos_x) + " " + str(pos_y)
         lines.append(line)
 
         disc_number = random.randint(3, 10)
@@ -66,6 +67,7 @@ def generatorCells(file):
 
     # robots
     robot_size = math.floor((random.randint(5, 9)/10) * cell_size)
+    robot_velocity = math.floor((random.randint(10, 50)))
     robots_number = random.randint(10, 100)
     for _ in range(0, robots_number):
         notCorrectPlace = True
@@ -76,7 +78,7 @@ def generatorCells(file):
             for point in robotPoints:
                 if pos_x != point.x and pos_y != point.y:
                     notCorrectPlace = False
-        line = "r " + str(robot_size) + " " + str(pos_x) + " " + str(pos_y)
+        line = "r " + str(robot_size) + " "+ str(robot_velocity) + " " + str(pos_x) + " " + str(pos_y)
         lines.append(line)
 
         disc_number = random.randint(3, 10)

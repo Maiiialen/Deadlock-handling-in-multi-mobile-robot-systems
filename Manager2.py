@@ -195,13 +195,18 @@ class Manager:
             self.colors.append(numpy.random.rand(3,))
 
     def print(self):
-        plt.clf()
+        # plt.clf()
+        for circle in circles:
+            circle.remove()
+            for point in robot.path:
+                ax.add_patch(patches.Circle((point.x/1000, point.y/1000), radius=0.1, color=self.colors[i]))
         plt.rcParams["figure.figsize"] = [self.grid.cell_size*self.grid.x_cells/1000, self.grid.cell_size*self.grid.y_cells/1000]
         plt.rcParams["figure.autolayout"] = True
         fig = plt.figure(1)
         ax = fig.add_subplot(111)
         col = ("black", "white")
         i = 0
+        circles = []
         for idx_x in range(0, self.grid.x_cells):
             x = idx_x*self.grid.cell_size/1000
             i += 1
@@ -214,7 +219,8 @@ class Manager:
         # col = ("b", "gold", "aqua", "salmon", "olive", "c", "navy", "teal")
         i = 0
         for robot in self.robots:
-            ax.add_patch(patches.Circle((robot.position_x/1000, robot.position_y/1000), radius=robot.size/2000, color=self.colors[i]))
+            circles.append(patches.Circle((robot.position_x/1000, robot.position_y/1000), radius=robot.size/2000, color=self.colors[i]))
+            ax.add_patch(circles[-1])
             for point in robot.path:
                 ax.add_patch(patches.Circle((point.x/1000, point.y/1000), radius=0.1, color=self.colors[i]))
             i += 1
