@@ -6,7 +6,6 @@ class Robot:
     velocity: int
     position_x: int
     position_y: int
-    blocked: int
     path: list
 
     def __init__(self, size, velocity, position_x, position_y, path):
@@ -14,7 +13,6 @@ class Robot:
         self.velocity = velocity
         self.position_x = position_x
         self.position_y = position_y
-        self.blocked = 0
         self.path = []
         for point in path:
             self.path.append(point)
@@ -55,26 +53,26 @@ class Robot:
             return None
         else:
             if len(self.path) > 0:
-                distance_to_end_point = int(abs((self.position_x - self.path[0].x) + (self.position_y - self.path[0].y)))
-                if distance_to_end_point == 0 and (self.position_x - self.path[0].x == 0 or self.position_y - self.path[0].y == 0):
+                if self.position_x - self.path[0].x == 0 and self.position_y - self.path[0].y == 0:
                     self.path.pop(0)
             if len(self.path) > 0:
-                distance_to_end_point = int(abs((self.position_x - self.path[0].x) + (self.position_y - self.path[0].y)))
-                if distance_to_end_point < self.velocity and (self.position_x - self.path[0].x == 0 or self.position_y - self.path[0].y == 0):
-                    return self.path[0]
-                else:
-                    x_diff = self.position_x - self.path[0].x
-                    if x_diff != 0:
-                        if self.path[0].x - self.position_x < 0:
-                            new_pos = Point(int(self.position_x - self.velocity), int(self.position_y))
-                        else:
-                            new_pos = Point(int(self.position_x + self.velocity), int(self.position_y))
+                x_diff = abs(self.position_x - self.path[0].x)
+                y_diff = abs(self.position_y - self.path[0].y)
+                if x_diff != 0:
+                    if x_diff < self.velocity:
+                        new_pos = Point(int(self.path[0].x), int(self.position_y))
+                    elif self.path[0].x - self.position_x < 0:
+                        new_pos = Point(int(self.position_x - self.velocity), int(self.position_y))
                     else:
-                        if self.path[0].y - self.position_y < 0:
-                            new_pos = Point(int(self.position_x), int(self.position_y - self.velocity))
-                        else:
-                            new_pos = Point(int(self.position_x), int(self.position_y + self.velocity))
-                    return new_pos
+                        new_pos = Point(int(self.position_x + self.velocity), int(self.position_y))
+                else:
+                    if y_diff < self.velocity:
+                        new_pos = Point(int(self.position_x), int(self.path[0].y))
+                    elif self.path[0].y - self.position_y < 0:
+                        new_pos = Point(int(self.position_x), int(self.position_y - self.velocity))
+                    else:
+                        new_pos = Point(int(self.position_x), int(self.position_y + self.velocity))
+                return new_pos
         return None
 
     def move(self, new_point):
@@ -90,5 +88,27 @@ class Robot:
             print("\t", end="")
             point.printp()
 
-
+    # def goBack(self):
+    #     x_diff = self.position_x - self.path[0].x
+    #     if x_diff != 0:
+    #         alpha = math.atan(abs((self.position_y - self.path[0].y)/(x_diff)))
+    #         if self.path[0].y - self.position_y < 0 and self.path[0].x - self.position_x < 0:
+    #             new_x = -int(self.position_x - math.cos(alpha)*self.size)
+    #             new_y = -int(self.position_y - math.sin(alpha)*self.size)
+    #         elif self.path[0].y - self.position_y < 0:
+    #             new_x = -int(self.position_x + math.cos(alpha)*self.size)
+    #             new_y = -int(self.position_y - math.sin(alpha)*self.size)
+    #         elif self.path[0].x - self.position_x < 0:
+    #             new_x = -int(self.position_x - math.cos(alpha)*self.size)
+    #             new_y = -int(self.position_y + math.sin(alpha)*self.size)
+    #         else:
+    #             new_x = -int(self.position_x + math.cos(alpha)*self.size)
+    #             new_y = -int(self.position_y + math.sin(alpha)*self.size)
+    #         new_pos = Point(new_x, new_y)
+    #     else:
+    #         if self.path[0].y - self.position_y < 0:
+    #             new_pos = Point(int(self.position_x), int(self.position_y - self.size))
+    #         else:
+    #             new_pos = Point(int(self.position_x), int(self.position_y + self.size))
+    #     self.path.insert(0, new_pos)
     

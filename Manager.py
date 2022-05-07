@@ -156,21 +156,29 @@ class Manager:
     def willNotCollide(self, given_robot, new_point):
         for robot in self.robots:
             if not robot == given_robot:
-                if (int(math.hypot((new_point.x - robot.position_x),(new_point.y - robot.position_y)))) < given_robot.size:
+                if (int(math.hypot((new_point.x - robot.position_x),(new_point.y - robot.position_y)))) < given_robot.size/2 + robot.size/2:
                     return False
         return True
                 
 
     def manage(self):
-        print("Manage")
+        # print("Manage")
+        # count = 0
+        # count2 = 0
         while True:
+            # if count == 1000:
+            #     print("move " + str(count2))
+            #     count2 += 1
+            #     count = 0
+            # count += 1
             results = self.move()
             if len(self.robots) == 0 or results != "ok":
-                print("Done")
+                # print("Done")
                 return results
 
     def move(self):
         # self.print()
+        blocked = 0
         for robot in self.robots:
             new_point = robot.calculateMove(self.method)
             if len(robot.path) == 0:
@@ -182,28 +190,22 @@ class Manager:
                 if self.resources_management == 1:
                     if self.willNotCollide(robot, new_point) and self.grid.updateRobotPosition(robot, new_point):
                         robot.move(new_point)
-                        # print("moved" + str(robot.blocked))
-                        robot.blocked = 0
+                        # print("moved")
                     else:
-                        robot.blocked += 1
+                        blocked += 1
                         # print("blocked")
                 else:
                     if self.willNotCollide(robot, new_point):
                         robot.move(new_point)
-                        # print("moved" + str(robot.blocked))
-                        robot.blocked = 0
+                        # print("moved" + str(blocked))
                     else:
-                        robot.blocked += 1
+                        blocked += 1
                         # print("blocked")
-            blocked = 0
-            for robotCheck in self.robots:
-                if robotCheck.blocked > 0:
-                    blocked += 1
-            if blocked == len(self.robots):
-                self.notEnded = len(self.robots)
-                print("ended: " + str(self.ended))
-                print("notEnded: " + str(self.notEnded))
-                return str(self.ended) + " " + str(self.notEnded)
+        if blocked == len(self.robots):
+            self.notEnded = len(self.robots)
+            # print("ended: " + str(self.ended))
+            # print("notEnded: " + str(self.notEnded))
+            return str(self.ended) + " " + str(self.notEnded)
         return "ok"
     
     def colorsGenerator(self):
