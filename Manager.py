@@ -20,17 +20,17 @@ class Manager:
     cell_capacity: int
     method: int
     resources_management:int
+    ended = 0
+    notEnded = 0
 
     def __init__(self, file, cell_capacity, method, resources_management):
         self.cell_capacity = cell_capacity
         self.method = method
         self.resources_management = resources_management
         self.grid, self.robots = self.readConfiguration(file)
-        for robot in self.robots:
-            self.grid.addRobotPosition(robot, Point(robot.position_x, robot.position_y))
+        self.addRobotsToGrid()
         self.findShortestPath()
-        self.colorsGenerator()
-        self.manage()
+        # self.colorsGenerator()
 
 
 
@@ -64,6 +64,7 @@ class Manager:
                 values.append(int(data[1]))
                 values.append(int(data[2]))
                 values.append(int(data[3]))
+                values.append(int(data[4]))
             elif isRobot and data[0] == 'd':
                 disc = Point(int(data[1]), int(data[2]))
                 points.append(disc)
@@ -80,6 +81,11 @@ class Manager:
         else:
             print("not given grid or robots!")
             return 0, 0
+
+
+    def addRobotsToGrid(self):
+        for robot in self.robots:
+            self.grid.addRobotPosition(robot, Point(robot.position_x, robot.position_y))
 
     def findClosestEdge(self, point):
         x_size = self.grid.x_cells*self.grid.cell_size
@@ -156,27 +162,27 @@ class Manager:
                 
 
     def manage(self):
+        print("Manage")
         while True:
-            self.move()
-            if len(self.robots) == 0:
+            results = self.move()
+            if len(self.robots) == 0 or results != "ok":
                 print("Done")
-                # i = 0
-                # while i < 10:
-                #     self.print()
-                #     i += 1
-                break
+                return results
 
     def move(self):
-        self.print()
+        # self.print()
         for robot in self.robots:
             new_point = robot.calculateMove(self.method)
             if len(robot.path) == 0:
                 self.grid.removeRobotPosition(robot)
                 self.robots.remove(robot)
+                # print("done")
+                self.ended += 1
             else:
                 if self.resources_management == 1:
                     if self.willNotCollide(robot, new_point) and self.grid.updateRobotPosition(robot, new_point):
                         robot.move(new_point)
+                        # print("moved" + str(robot.blocked))
                         robot.blocked = 0
                     else:
                         robot.blocked += 1
@@ -184,10 +190,21 @@ class Manager:
                 else:
                     if self.willNotCollide(robot, new_point):
                         robot.move(new_point)
+                        # print("moved" + str(robot.blocked))
                         robot.blocked = 0
                     else:
                         robot.blocked += 1
                         # print("blocked")
+            blocked = 0
+            for robotCheck in self.robots:
+                if robotCheck.blocked > 0:
+                    blocked += 1
+            if blocked == len(self.robots):
+                self.notEnded = len(self.robots)
+                print("ended: " + str(self.ended))
+                print("notEnded: " + str(self.notEnded))
+                return str(self.ended) + " " + str(self.notEnded)
+        return "ok"
     
     def colorsGenerator(self):
         self.colors = []
