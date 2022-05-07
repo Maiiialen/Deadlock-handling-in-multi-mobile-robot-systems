@@ -177,30 +177,44 @@ class Manager:
                 return results
 
     def move(self):
-        self.print()
+        # self.print()
         blocked = 0
         for robot in self.robots:
             new_point = robot.calculateMove(self.method)
             if len(robot.path) == 0:
                 self.grid.removeRobotPosition(robot)
                 self.robots.remove(robot)
-                # print("done")
                 self.ended += 1
             else:
                 if self.resources_management == 1:
                     if self.willNotCollide(robot, new_point) and self.grid.updateRobotPosition(robot, new_point):
                         robot.move(new_point)
-                        # print("moved")
                     else:
-                        blocked += 1
-                        # print("blocked")
+                        robot.blocked += 1
+                        if robot.blocked > numpy.random.randint(5,25):
+                            robot.blocked = 0
+                            if not robot.goesBack:
+                                robot.goBack(self.method)
+                                if self.willNotCollide(robot, new_point) and self.grid.updateRobotPosition(robot, new_point):
+                                    robot.move(new_point)
+                                    robot.blocked = 0
+                            else:
+                                blocked += 1
                 else:
                     if self.willNotCollide(robot, new_point):
                         robot.move(new_point)
-                        # print("moved" + str(blocked))
                     else:
-                        blocked += 1
-                        # print("blocked")
+                        robot.blocked += 1
+                        if robot.blocked > numpy.random.randint(5,25):
+                            robot.blocked = 0
+                            if not robot.goesBack:
+                                robot.goBack(self.method)
+                                if self.willNotCollide(robot, new_point):
+                                    robot.move(new_point)
+                                    robot.blocked = 0
+                            else:
+                                blocked += 1
+
         if blocked == len(self.robots):
             self.notEnded = len(self.robots)
         #     # print("ended: " + str(self.ended))
@@ -221,15 +235,15 @@ class Manager:
         ax = fig.add_subplot(111)
         col = ("black", "white")
         i = 0
-        for idx_x in range(0, self.grid.x_cells):
-            x = idx_x*self.grid.cell_size/1000
-            i += 1
-            i %= 2
-            j = i
-            for idx_y in range(0, self.grid.y_cells):
-                ax.add_patch(patches.Rectangle((x, idx_y*self.grid.cell_size/1000), self.grid.cell_size/1000, self.grid.cell_size/1000, color = col[j]))
-                j += 1
-                j %= 2
+        # for idx_x in range(0, self.grid.x_cells):
+        #     x = idx_x*self.grid.cell_size/1000
+        #     i += 1
+        #     i %= 2
+        #     j = i
+        #     for idx_y in range(0, self.grid.y_cells):
+        #         ax.add_patch(patches.Rectangle((x, idx_y*self.grid.cell_size/1000), self.grid.cell_size/1000, self.grid.cell_size/1000, color = col[j]))
+        #         j += 1
+        #         j %= 2
         # col = ("b", "gold", "aqua", "salmon", "olive", "c", "navy", "teal")
         i = 0
         for robot in self.robots:
