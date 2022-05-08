@@ -24,7 +24,7 @@ def generator(file):
     # robots
     robots_number = random.randint(10, 100)
     for _ in range(0, robots_number):
-        robot_size = math.floor((random.randint(5, 9)/10) * cell_size)
+        robot_size = math.floor((random.randint(5, 8)/10) * cell_size)
         robot_velocity = math.floor((random.randint(100, 500)))
         CorrectPlace = False
         while(not CorrectPlace):
@@ -72,7 +72,7 @@ def generatorCells(file):
     # robots
     robots_number = random.randint(10, 100)
     for _ in range(0, robots_number):
-        robot_size = math.floor((random.randint(5, 9)/10) * cell_size)
+        robot_size = math.floor((random.randint(5, 8)/10) * cell_size)
         robot_velocity = math.floor((random.randint(100, 500)))
         notCorrectPlace = True
         while(notCorrectPlace):

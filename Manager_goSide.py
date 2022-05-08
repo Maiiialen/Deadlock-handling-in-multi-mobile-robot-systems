@@ -12,6 +12,7 @@ from ortools.constraint_solver import pywrapcp
 import matplotlib
 from matplotlib import pyplot as plt, patches
 import numpy
+import random
 
 class Manager:
     grid: Grid
@@ -177,7 +178,7 @@ class Manager:
                 return results
 
     def move(self):
-        self.print()
+        # self.print()
         blocked = 0
         for robot in self.robots:
             new_point = robot.calculateMove(self.method)
@@ -194,13 +195,15 @@ class Manager:
                         if robot.blocked > numpy.random.randint(5,25):
                             robot.blocked = 0
                             if not robot.goesBack:
-                                # robot.goBack(self.method)
-                                robot.goLeft(self.method)
-                                if self.willNotCollide(robot, new_point) and self.grid.updateRobotPosition(robot, new_point):
-                                    robot.move(new_point)
-                                    robot.blocked = 0
+                                robot.goLeft(self.method, math.floor((random.randint(15, 25)/10) * self.grid.cell_size))
+                                if not self.grid.isCorrectPoint(robot):
+                                    robot.removePoint()
+                                    robot.goesBack = 0
                             else:
-                                blocked += 1
+                                robot.changeSide(self.method, math.floor((random.randint(15, 25)/10) * self.grid.cell_size))
+                                if not self.grid.isCorrectPoint(robot):
+                                    robot.removePoint()
+                                    robot.goesBack = 0
                 else:
                     if self.willNotCollide(robot, new_point):
                         robot.move(new_point)
@@ -209,13 +212,15 @@ class Manager:
                         if robot.blocked > numpy.random.randint(5,25):
                             robot.blocked = 0
                             if not robot.goesBack:
-                                # robot.goBack(self.method)
-                                robot.goLeft(self.method)
-                                if self.willNotCollide(robot, new_point):
-                                    robot.move(new_point)
-                                    robot.blocked = 0
+                                robot.goLeft(self.method, math.floor((random.randint(15, 25)/10) * self.grid.cell_size))
+                                if not self.grid.isCorrectPoint(robot):
+                                    robot.removePoint()
+                                    robot.goesBack = 0
                             else:
-                                blocked += 1
+                                robot.changeSide(self.method, math.floor((random.randint(15, 25)/10) * self.grid.cell_size))
+                                if not self.grid.isCorrectPoint(robot):
+                                    robot.removePoint()
+                                    robot.goesBack = 0
 
         if blocked == len(self.robots):
             self.notEnded = len(self.robots)

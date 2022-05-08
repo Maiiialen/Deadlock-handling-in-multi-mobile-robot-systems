@@ -45,10 +45,10 @@ class Grid:
         positions = []
 
         if not x < self.x_cells:
-            x -= 1
+            x = self.x_cells-1
         if not y < self.y_cells:
-            y -= 1
-
+            y = self.y_cells-1
+        # print("x: " + str(x) + " ,y: " + str(y))
         if self.grid[x][y] >= self.cell_capacity:
             return False
             
@@ -154,3 +154,9 @@ class Grid:
             self.addRobotPosition(robot, old_position)
             return False
         return True
+
+    def isCorrectPoint(self, robot):
+        if robot.position_x > 0 and robot.position_x < self.x_cells*self.cell_size:
+            if robot.position_y > 0 and robot.position_y < self.y_cells*self.cell_size:
+                return True
+        return False
