@@ -228,7 +228,6 @@ class Robot:
                 self.goLeft(method, cellSize)
             elif self.goesLeft == 1:
                 self.goRight(method, cellSize)
-        return False
 
     def removePoint(self):
         self.path.pop(0)

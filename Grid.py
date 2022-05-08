@@ -45,10 +45,13 @@ class Grid:
         positions = []
 
         if not x < self.x_cells:
-            x = self.x_cells-1
+            # x = self.x_cells-1
+            x -= 1
         if not y < self.y_cells:
-            y = self.y_cells-1
-        # print("x: " + str(x) + " ,y: " + str(y))
+            # y = self.y_cells-1
+            y -= 1
+        # print("add, x: " + str(x) + " ,y: " + str(y))
+        # print("add, new_position.x: " + str(new_position.x) + " ,new_position.y: " + str(new_position.y))
         if self.grid[x][y] >= self.cell_capacity:
             return False
             
@@ -113,6 +116,8 @@ class Grid:
             x -= 1
         if not y < self.y_cells:
             y -= 1
+        # print("remove, x: " + str(x) + " ,y: " + str(y))
+        # print("remove, robot.position_x: " + str(robot.position_x) + " ,robot.position_y: " + str(robot.position_y))
         self.grid[x][y] -= 1
         if robot.position_x < x*self.cell_size + robot.size//2 and x > 0:
             self.grid[x-1][y] -= 1
@@ -156,7 +161,8 @@ class Grid:
         return True
 
     def isCorrectPoint(self, robot):
-        if robot.position_x > 0 and robot.position_x < self.x_cells*self.cell_size:
-            if robot.position_y > 0 and robot.position_y < self.y_cells*self.cell_size:
+        if robot.path[0].x > 0 and robot.path[0].x/self.cell_size < self.x_cells:
+            if robot.path[0].y > 0 and robot.path[0].y/self.cell_size < self.y_cells:
+                # print("robot.path[0].x/self.cell_size: " + str(robot.path[0].x/self.cell_size) + " ,robot.path[0].y/self.cell_size: " + str(robot.path[0].y/self.cell_size))
                 return True
         return False

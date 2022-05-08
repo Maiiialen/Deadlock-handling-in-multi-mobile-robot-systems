@@ -31,7 +31,7 @@ class Manager:
         self.grid, self.robots = self.readConfiguration(file)
         self.addRobotsToGrid()
         self.findShortestPath()
-        self.colorsGenerator()
+        # self.colorsGenerator()
 
 
 
@@ -187,45 +187,26 @@ class Manager:
                 self.robots.remove(robot)
                 self.ended += 1
             else:
-                if self.resources_management == 1:
-                    if self.willNotCollide(robot, new_point) and self.grid.updateRobotPosition(robot, new_point):
-                        robot.move(new_point)
-                    else:
-                        robot.blocked += 1
-                        if robot.blocked > numpy.random.randint(5,25):
-                            robot.blocked = 0
-                            if not robot.goesBack:
-                                robot.goLeft(self.method, math.floor((random.randint(15, 25)/10) * self.grid.cell_size))
-                                if not self.grid.isCorrectPoint(robot):
-                                    robot.removePoint()
-                                    robot.goesBack = 0
-                            else:
-                                robot.changeSide(self.method, math.floor((random.randint(15, 25)/10) * self.grid.cell_size))
-                                if not self.grid.isCorrectPoint(robot):
-                                    robot.removePoint()
-                                    robot.goesBack = 0
+                if self.willNotCollide(robot, new_point) and (self.resources_management == 0 or (self.resources_management == 1 and self.grid.updateRobotPosition(robot, new_point))):
+                    robot.move(new_point)
                 else:
-                    if self.willNotCollide(robot, new_point):
-                        robot.move(new_point)
-                    else:
-                        robot.blocked += 1
-                        if robot.blocked > numpy.random.randint(5,25):
-                            robot.blocked = 0
-                            if not robot.goesBack:
-                                robot.goLeft(self.method, math.floor((random.randint(15, 25)/10) * self.grid.cell_size))
-                                if not self.grid.isCorrectPoint(robot):
-                                    robot.removePoint()
-                                    robot.goesBack = 0
-                            else:
-                                robot.changeSide(self.method, math.floor((random.randint(15, 25)/10) * self.grid.cell_size))
-                                if not self.grid.isCorrectPoint(robot):
-                                    robot.removePoint()
-                                    robot.goesBack = 0
-
+                    robot.blocked += 1
+                    blocked += 1
+                    if robot.blocked > numpy.random.randint(5,25):
+                        robot.blocked = 0
+                        if not robot.goesBack:
+                            robot.goLeft(self.method, math.floor((random.randint(15, 25)/10) * self.grid.cell_size))
+                            if not self.grid.isCorrectPoint(robot):
+                                robot.removePoint()
+                                robot.path.append(Point(robot.position_x, robot.position_y))
+                                # robot.goesBack = 0
+                        else:
+                            robot.changeSide(self.method, math.floor((random.randint(15, 25)/10) * self.grid.cell_size))
+                            if not self.grid.isCorrectPoint(robot):
+                                robot.removePoint()
+                                robot.goesBack = 0
         if blocked == len(self.robots):
             self.notEnded = len(self.robots)
-        #     # print("ended: " + str(self.ended))
-        #     # print("notEnded: " + str(self.notEnded))
             return str(self.ended) + " " + str(self.notEnded)
         return "ok"
     

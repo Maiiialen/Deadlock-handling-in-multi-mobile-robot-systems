@@ -9,7 +9,7 @@ if __name__ == '__main__':
     # manager = Manager("grid2.txt", 1, 0, 0)
     # print(manager.manage())
 
-    for i in range(0,1):
+    for i in range(0,10):
         print("Start")
         a = datetime.datetime.now()
         manager = Manager("generated/generated_"+str(i)+".txt", 1, 0, 0)
@@ -65,10 +65,35 @@ if __name__ == '__main__':
             f.write(results + " " + str(c.microseconds))
             f.write("\n")
         print("6 Done")
-        print("Done " + str(i))
+        print("___ Done " + str(i) + " ___")
 
-    # for i in range(0,1000):
-    #     manager = Manager("generatedCells/generatedCells_"+str(i)+".txt", 1, 1, 0)
-    #     manager = Manager("generatedCells/generatedCells_"+str(i)+".txt", 1, 1, 1)
-    #     manager = Manager("generatedCells/generatedCells_"+str(i)+".txt", 2, 1, 1)
+    # for i in range(0,10):
+        # print("Start")
+        # a = datetime.datetime.now()
+        # manager = Manager("generatedCells/generatedCells_"+str(i)+".txt", 1, 1, 0)
+        # results = manager.manage()
+        # b = datetime.datetime.now()
+        # c = b - a
+        # with open("results/generated_100.txt", 'a') as f:
+        #     f.write(results + " " + str(c.microseconds))
+        #     f.write("\n")
+        # print("1 Done")
+        # a = datetime.datetime.now()
+        # manager = Manager("generatedCells/generatedCells_"+str(i)+".txt", 1, 1, 1)
+        # results = manager.manage()
+        # b = datetime.datetime.now()
+        # c = b - a
+        # with open("results/generated_100.txt", 'a') as f:
+        #     f.write(results + " " + str(c.microseconds))
+        #     f.write("\n")
+        # print("1 Done")
+        # a = datetime.datetime.now()
+        # manager = Manager("generatedCells/generatedCells_"+str(i)+".txt", 2, 1, 1)
+        # results = manager.manage()
+        # b = datetime.datetime.now()
+        # c = b - a
+        # with open("results/generated_100.txt", 'a') as f:
+        #     f.write(results + " " + str(c.microseconds))
+        #     f.write("\n")
+        # print("1 Done")
     exit()
