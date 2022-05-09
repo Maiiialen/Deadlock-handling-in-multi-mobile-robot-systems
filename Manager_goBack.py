@@ -12,8 +12,9 @@ from ortools.constraint_solver import pywrapcp
 import matplotlib
 from matplotlib import pyplot as plt, patches
 import numpy
+import random
 
-class Manager:
+class Manager_goBack:
     grid: Grid
     robots: list
     colors: list
@@ -21,7 +22,7 @@ class Manager:
     method: int
     resources_management:int
     ended = 0
-    notEnded = 0
+    blocked = 0
 
     def __init__(self, file, cell_capacity, method, resources_management):
         self.cell_capacity = cell_capacity
@@ -73,10 +74,6 @@ class Manager:
         robots.append(robot)
         
         if isGrid and len(robots) > 0:
-            # print("Grid")
-            # grid.printGrid()
-            # for robot in robots:
-            #     robot.printRobot()
             return grid, robots
         else:
             print("not given grid or robots!")
@@ -162,23 +159,16 @@ class Manager:
                 
 
     def manage(self):
-        # print("Manage")
-        # count = 0
-        # count2 = 0
+        numberOfRobots = len(self.robots)
         while True:
-            # if count == 1000:
-            #     print("move " + str(count2))
-            #     count2 += 1
-            #     count = 0
-            # count += 1
             results = self.move()
-            if len(self.robots) == 0 or results != "ok":
-                # print("Done")
+            if len(self.robots) == 0:
+                return str(numberOfRobots) + " 0"
+            if results != "ok":
                 return results
 
     def move(self):
-        self.print()
-        blocked = 0
+        # self.print()
         for robot in self.robots:
             new_point = robot.calculateMove(self.method)
             if len(robot.path) == 0:
@@ -186,42 +176,29 @@ class Manager:
                 self.robots.remove(robot)
                 self.ended += 1
             else:
-                if self.resources_management == 1:
-                    if self.willNotCollide(robot, new_point) and self.grid.updateRobotPosition(robot, new_point):
-                        robot.move(new_point)
-                    else:
-                        robot.blocked += 1
-                        if robot.blocked > numpy.random.randint(5,25):
-                            robot.blocked = 0
-                            if not robot.goesBack:
-                                # robot.goBack(self.method)
-                                robot.goLeft(self.method)
-                                if self.willNotCollide(robot, new_point) and self.grid.updateRobotPosition(robot, new_point):
-                                    robot.move(new_point)
-                                    robot.blocked = 0
-                            else:
-                                blocked += 1
+                if self.willNotCollide(robot, new_point) and (self.resources_management == 0 or (self.resources_management == 1 and self.grid.updateRobotPosition(robot, new_point))):
+                    robot.move(new_point)
                 else:
-                    if self.willNotCollide(robot, new_point):
-                        robot.move(new_point)
-                    else:
-                        robot.blocked += 1
-                        if robot.blocked > numpy.random.randint(5,25):
-                            robot.blocked = 0
-                            if not robot.goesBack:
-                                # robot.goBack(self.method)
-                                robot.goLeft(self.method)
-                                if self.willNotCollide(robot, new_point):
-                                    robot.move(new_point)
-                                    robot.blocked = 0
-                            else:
-                                blocked += 1
-
-        if blocked == len(self.robots):
-            self.notEnded = len(self.robots)
-        #     # print("ended: " + str(self.ended))
-        #     # print("notEnded: " + str(self.notEnded))
-            return str(self.ended) + " " + str(self.notEnded)
+                    robot.blocked += 1
+                    if robot.blocked > numpy.random.randint(5,25):
+                        robot.blocked = 0
+                        if not robot.isGoingBack:
+                            robot.goBack(self.method, math.floor((random.randint(15, 25)/10) * self.grid.cell_size))
+                            robot.isGoingBack = 1
+                            if not self.grid.isCorrectPoint(robot):
+                                robot.removePoint()
+                                robot.isGoingBack = 0
+                        #         blocked += 1
+                        # else:
+                        #     blocked += 1
+            # print(robot.sameSizeNumber)
+            if robot.sameSizeNumber >= 2:
+                    self.blocked += 1
+        # print(str(self.blocked) + " " + str(len(self.robots)))
+        if self.blocked == len(self.robots):
+            return str(self.ended) + " " + str(len(self.robots))
+        else:
+            self.blocked = 0
         return "ok"
     
     def colorsGenerator(self):

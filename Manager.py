@@ -21,7 +21,6 @@ class Manager:
     method: int
     resources_management:int
     ended = 0
-    notEnded = 0
 
     def __init__(self, file, cell_capacity, method, resources_management):
         self.cell_capacity = cell_capacity
@@ -30,7 +29,7 @@ class Manager:
         self.grid, self.robots = self.readConfiguration(file)
         self.addRobotsToGrid()
         self.findShortestPath()
-        self.colorsGenerator()
+        # self.colorsGenerator()
 
 
 
@@ -73,10 +72,6 @@ class Manager:
         robots.append(robot)
         
         if isGrid and len(robots) > 0:
-            # print("Grid")
-            # grid.printGrid()
-            # for robot in robots:
-            #     robot.printRobot()
             return grid, robots
         else:
             print("not given grid or robots!")
@@ -162,50 +157,30 @@ class Manager:
                 
 
     def manage(self):
-        # print("Manage")
-        # count = 0
-        # count2 = 0
+        numberOfRobots = len(self.robots)
         while True:
-            # if count == 1000:
-            #     print("move " + str(count2))
-            #     count2 += 1
-            #     count = 0
-            # count += 1
             results = self.move()
-            if len(self.robots) == 0 or results != "ok":
-                # print("Done")
+            if len(self.robots) == 0:
+                return str(numberOfRobots) + " 0"
+            if results != "ok":
                 return results
 
     def move(self):
-        self.print()
+        # self.print()
         blocked = 0
         for robot in self.robots:
             new_point = robot.calculateMove(self.method)
             if len(robot.path) == 0:
                 self.grid.removeRobotPosition(robot)
                 self.robots.remove(robot)
-                # print("done")
                 self.ended += 1
             else:
-                if self.resources_management == 1:
-                    if self.willNotCollide(robot, new_point) and self.grid.updateRobotPosition(robot, new_point):
-                        robot.move(new_point)
-                        # print("moved")
-                    else:
-                        blocked += 1
-                        # print("blocked")
+                if self.willNotCollide(robot, new_point) and (self.resources_management == 0 or (self.resources_management == 1 and self.grid.updateRobotPosition(robot, new_point))):
+                    robot.move(new_point)
                 else:
-                    if self.willNotCollide(robot, new_point):
-                        robot.move(new_point)
-                        # print("moved" + str(blocked))
-                    else:
-                        blocked += 1
-                        # print("blocked")
+                    blocked += 1
         if blocked == len(self.robots):
-            self.notEnded = len(self.robots)
-        #     # print("ended: " + str(self.ended))
-        #     # print("notEnded: " + str(self.notEnded))
-            return str(self.ended) + " " + str(self.notEnded)
+            return str(self.ended) + " " + str(len(self.robots))
         return "ok"
     
     def colorsGenerator(self):
@@ -219,18 +194,17 @@ class Manager:
         plt.rcParams["figure.autolayout"] = True
         fig = plt.figure(1)
         ax = fig.add_subplot(111)
-        col = ("black", "white")
-        i = 0
-        for idx_x in range(0, self.grid.x_cells):
-            x = idx_x*self.grid.cell_size/1000
-            i += 1
-            i %= 2
-            j = i
-            for idx_y in range(0, self.grid.y_cells):
-                ax.add_patch(patches.Rectangle((x, idx_y*self.grid.cell_size/1000), self.grid.cell_size/1000, self.grid.cell_size/1000, color = col[j]))
-                j += 1
-                j %= 2
-        # col = ("b", "gold", "aqua", "salmon", "olive", "c", "navy", "teal")
+        # col = ("black", "white")
+        # i = 0
+        # for idx_x in range(0, self.grid.x_cells):
+        #     x = idx_x*self.grid.cell_size/1000
+        #     i += 1
+        #     i %= 2
+        #     j = i
+        #     for idx_y in range(0, self.grid.y_cells):
+        #         ax.add_patch(patches.Rectangle((x, idx_y*self.grid.cell_size/1000), self.grid.cell_size/1000, self.grid.cell_size/1000, color = col[j]))
+        #         j += 1
+        #         j %= 2
         i = 0
         for robot in self.robots:
             ax.add_patch(patches.Circle((robot.position_x/1000, robot.position_y/1000), radius=robot.size/2000, color=self.colors[i]))
@@ -239,7 +213,6 @@ class Manager:
             i += 1
         plt.axis('equal')
         plt.draw()
-        # plt.pause(10)
         plt.pause(0.001)
         
 def create_data_model(robot:Robot):

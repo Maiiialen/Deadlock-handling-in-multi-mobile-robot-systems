@@ -14,15 +14,15 @@ from matplotlib import pyplot as plt, patches
 import numpy
 import random
 
-class Manager:
+class Manager_goSide:
     grid: Grid
     robots: list
     colors: list
     cell_capacity: int
     method: int
     resources_management:int
+    blocked = 0
     ended = 0
-    notEnded = 0
 
     def __init__(self, file, cell_capacity, method, resources_management):
         self.cell_capacity = cell_capacity
@@ -31,7 +31,7 @@ class Manager:
         self.grid, self.robots = self.readConfiguration(file)
         self.addRobotsToGrid()
         self.findShortestPath()
-        # self.colorsGenerator()
+        self.colorsGenerator()
 
 
 
@@ -74,10 +74,6 @@ class Manager:
         robots.append(robot)
         
         if isGrid and len(robots) > 0:
-            # print("Grid")
-            # grid.printGrid()
-            # for robot in robots:
-            #     robot.printRobot()
             return grid, robots
         else:
             print("not given grid or robots!")
@@ -163,22 +159,16 @@ class Manager:
                 
 
     def manage(self):
-        # print("Manage")
-        # count = 0
-        # count2 = 0
+        numberOfRobots = len(self.robots)
         while True:
-            # if count == 1000:
-            #     print("move " + str(count2))
-            #     count2 += 1
-            #     count = 0
-            # count += 1
             results = self.move()
-            if len(self.robots) == 0 or results != "ok":
-                # print("Done")
+            if len(self.robots) == 0:
+                return str(numberOfRobots) + " 0"
+            if results != "ok":
                 return results
 
     def move(self):
-        # self.print()
+        self.print()
         blocked = 0
         for robot in self.robots:
             new_point = robot.calculateMove(self.method)
@@ -194,20 +184,17 @@ class Manager:
                     blocked += 1
                     if robot.blocked > numpy.random.randint(5,25):
                         robot.blocked = 0
-                        if not robot.goesBack:
-                            robot.goLeft(self.method, math.floor((random.randint(15, 25)/10) * self.grid.cell_size))
-                            if not self.grid.isCorrectPoint(robot):
-                                robot.removePoint()
-                                robot.path.append(Point(robot.position_x, robot.position_y))
-                                # robot.goesBack = 0
-                        else:
-                            robot.changeSide(self.method, math.floor((random.randint(15, 25)/10) * self.grid.cell_size))
-                            if not self.grid.isCorrectPoint(robot):
-                                robot.removePoint()
-                                robot.goesBack = 0
+                        robot.changeSide(self.method, math.floor((random.randint(15, 25)/10) * self.grid.cell_size))
+                        robot.isGoingBack = 1
+                        if not self.grid.isCorrectPoint(robot):
+                            robot.removePoint()
+                            robot.isGoingBack = 0
         if blocked == len(self.robots):
-            self.notEnded = len(self.robots)
-            return str(self.ended) + " " + str(self.notEnded)
+            self.blocked += 1
+            if self.blocked == 10:
+                return str(self.ended) + " " + str(len(self.robots))
+        else:
+            self.blocked = 0
         return "ok"
     
     def colorsGenerator(self):
@@ -221,8 +208,8 @@ class Manager:
         plt.rcParams["figure.autolayout"] = True
         fig = plt.figure(1)
         ax = fig.add_subplot(111)
-        col = ("black", "white")
-        i = 0
+        # col = ("black", "white")
+        # i = 0
         # for idx_x in range(0, self.grid.x_cells):
         #     x = idx_x*self.grid.cell_size/1000
         #     i += 1
@@ -232,7 +219,6 @@ class Manager:
         #         ax.add_patch(patches.Rectangle((x, idx_y*self.grid.cell_size/1000), self.grid.cell_size/1000, self.grid.cell_size/1000, color = col[j]))
         #         j += 1
         #         j %= 2
-        # col = ("b", "gold", "aqua", "salmon", "olive", "c", "navy", "teal")
         i = 0
         for robot in self.robots:
             ax.add_patch(patches.Circle((robot.position_x/1000, robot.position_y/1000), radius=robot.size/2000, color=self.colors[i]))
@@ -241,7 +227,6 @@ class Manager:
             i += 1
         plt.axis('equal')
         plt.draw()
-        # plt.pause(10)
         plt.pause(0.001)
         
 def create_data_model(robot:Robot):

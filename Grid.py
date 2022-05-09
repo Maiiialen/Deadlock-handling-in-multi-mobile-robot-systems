@@ -45,65 +45,48 @@ class Grid:
         positions = []
 
         if not x < self.x_cells:
-            # x = self.x_cells-1
             x -= 1
         if not y < self.y_cells:
-            # y = self.y_cells-1
             y -= 1
-        # print("add, x: " + str(x) + " ,y: " + str(y))
-        # print("add, new_position.x: " + str(new_position.x) + " ,new_position.y: " + str(new_position.y))
         if self.grid[x][y] >= self.cell_capacity:
             return False
             
-        # self.grid[x][y] += 1
         positions.append(Point(x, y))
         if new_position.x < x*self.cell_size + robot.size//2 and x > 0:
             if self.grid[x-1][y] >= self.cell_capacity:
                 return False
-            # self.grid[x-1][y] += 1
             positions.append(Point(x-1, y))
             if new_position.y < y*self.cell_size + robot.size//2 and y > 0:
                 if self.grid[x][y-1] >= self.cell_capacity or self.grid[x-1][y-1] >= self.cell_capacity:
                     return False
-                # self.grid[x][y-1] += 1
-                # self.grid[x-1][y-1] += 1
                 positions.append(Point(x, y-1))
                 positions.append(Point(x-1, y-1))
             elif new_position.y > (y+1)*self.cell_size - robot.size//2 and y < self.y_cells-1:
                 if self.grid[x][y+1] >= self.cell_capacity or self.grid[x-1][y+1] >= self.cell_capacity:
                     return False
-                # self.grid[x][y+1] += 1
-                # self.grid[x-1][y+1] += 1
                 positions.append(Point(x, y+1))
                 positions.append(Point(x-1, y+1))
         elif new_position.x > (x+1)*self.cell_size - robot.size//2 and x < self.x_cells-1:
             if self.grid[x+1][y] >= self.cell_capacity:
                 return False
-            # self.grid[x+1][y] += 1
             positions.append(Point(x+1, y))
             if new_position.y < y*self.cell_size + robot.size//2 and y > 0:
                 if self.grid[x][y-1] >= self.cell_capacity or self.grid[x+1][y-1] >= self.cell_capacity:
                     return False
-                # self.grid[x][y-1] += 1
-                # self.grid[x+1][y-1] += 1
                 positions.append(Point(x, y-1))
                 positions.append(Point(x+1, y-1))
             elif new_position.y > (y+1)*self.cell_size - robot.size//2 and y < self.y_cells-1:
                 if self.grid[x][y+1] >= self.cell_capacity or self.grid[x+1][y+1] >= self.cell_capacity:
                     return False
-                # self.grid[x][y+1] += 1
-                # self.grid[x+1][y+1] += 1
                 positions.append(Point(x, y+1))
                 positions.append(Point(x+1, y+1))
         elif new_position.y < y*self.cell_size + robot.size//2 and y > 0:
             if self.grid[x][y-1] >= self.cell_capacity:
                 return False
-            # self.grid[x][y-1] += 1
             positions.append(Point(x, y-1))
         elif new_position.y > (y+1)*self.cell_size - robot.size//2 and y < self.y_cells-1:
             if self.grid[x][y+1] >= self.cell_capacity:
                 return False
-            # self.grid[x][y+1] += 1
             positions.append(Point(x, y+1))
         for pos in positions:
             self.grid[pos.x][pos.y] += 1
@@ -116,8 +99,6 @@ class Grid:
             x -= 1
         if not y < self.y_cells:
             y -= 1
-        # print("remove, x: " + str(x) + " ,y: " + str(y))
-        # print("remove, robot.position_x: " + str(robot.position_x) + " ,robot.position_y: " + str(robot.position_y))
         self.grid[x][y] -= 1
         if robot.position_x < x*self.cell_size + robot.size//2 and x > 0:
             self.grid[x-1][y] -= 1
@@ -140,16 +121,6 @@ class Grid:
         elif robot.position_y > (y+1)*self.cell_size - robot.size//2 and y < self.y_cells-1:
             self.grid[x][y+1] -= 1
 
-    # def updateRobotPosition(self, robot, new_position):
-    #     temp_grid = copy.deepcopy(self.grid)
-
-    #     self.removeRobotPosition(robot)
-            
-    #     if not self.addRobotPosition(robot, new_position):
-    #         self.grid = copy.deepcopy(temp_grid)
-    #         return False
-    #     return True
-
     def updateRobotPosition(self, robot, new_position):
         old_position = Point(robot.position_x, robot.position_y)
 
@@ -163,6 +134,5 @@ class Grid:
     def isCorrectPoint(self, robot):
         if robot.path[0].x > 0 and robot.path[0].x/self.cell_size < self.x_cells:
             if robot.path[0].y > 0 and robot.path[0].y/self.cell_size < self.y_cells:
-                # print("robot.path[0].x/self.cell_size: " + str(robot.path[0].x/self.cell_size) + " ,robot.path[0].y/self.cell_size: " + str(robot.path[0].y/self.cell_size))
                 return True
         return False
