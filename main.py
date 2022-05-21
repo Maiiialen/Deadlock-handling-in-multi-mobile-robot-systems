@@ -1,99 +1,111 @@
 #!/usr/bin/env python
-import datetime
-# from Manager import Manager
-# from Manager_goBack import Manager
-from Manager_goSide import Manager
+import time
+from Manager import Manager
+from Manager_goSide import Manager_goSide
+from Manager_goSide_Grid import Manager_goSide_Grid
+from Manager_goBack import Manager_goBack
           
+# gridSize_x = [10]
+# gridSize_y = [10]
+gridSize_x = [10, 50, 100, 20, 100, 40, 80]
+gridSize_y = [10, 50, 100, 100, 20, 80, 40]
+# robotsNumber_percent = [10]
+# discs = [10]
+robotsNumber_percent = [5, 10]
+# robotsNumber_percent = [5, 10, 15, 20]
+discs = [3, 8]
+# discs = [3, 10]
+
+
+# file_name, cell_capacity, 0[euklidian] or 1[Manhattan], resources management 1[on] 0[off]
+
+def runTest(cell_capacity, method, resource_management):
+    manager = Manager("results/free_"+str(gridSize_x[i])+"_"+str(gridSize_y[i])+"_"+str(robotsNumber_percent[j])+"_"+str(discs[k])+".txt", cell_capacity, method, resource_management)
+    a = time.process_time()
+    results = manager.manage()
+    b = time.process_time()
+    c = int((b - a)*1000000)
+    with open("results/results"+str(gridSize_x[i])+"_"+str(gridSize_y[i])+"_"+str(robotsNumber_percent[j])+"_"+str(discs[k])+"_" + str(cell_capacity) + str(method) + str(resource_management) +".txt", 'a') as f:
+        f.write(results + " " + str(c))
+        f.write("\n")
+    print("Done 1")
+
+    manager = Manager_goSide("results/free_"+str(gridSize_x[i])+"_"+str(gridSize_y[i])+"_"+str(robotsNumber_percent[j])+"_"+str(discs[k])+".txt", cell_capacity, method, resource_management)
+    a = time.process_time()
+    results = manager.manage()
+    b = time.process_time()
+    c = int((b - a)*1000000)
+    with open("results/results_goSide"+str(gridSize_x[i])+"_"+str(gridSize_y[i])+"_"+str(robotsNumber_percent[j])+"_"+str(discs[k])+"_" + str(cell_capacity) + str(method) + str(resource_management) +".txt", 'a') as f:
+        f.write(results + " " + str(c))
+        f.write("\n")
+    print("Done 2")
+
+    manager = Manager_goBack("results/free_"+str(gridSize_x[i])+"_"+str(gridSize_y[i])+"_"+str(robotsNumber_percent[j])+"_"+str(discs[k])+".txt", cell_capacity, method, resource_management)
+    a = time.process_time()
+    results = manager.manage()
+    b = time.process_time()
+    c = int((b - a)*1000000)
+    with open("results/results_goback"+str(gridSize_x[i])+"_"+str(gridSize_y[i])+"_"+str(robotsNumber_percent[j])+"_"+str(discs[k])+"_" + str(cell_capacity) + str(method) + str(resource_management) +".txt", 'a') as f:
+        f.write(results + " " + str(c))
+        f.write("\n")
+    print("Done 3")
+
+def runTest_grid(cell_capacity, method, resource_management):
+    manager = Manager("results/grid_"+str(gridSize_x[i])+"_"+str(gridSize_y[i])+"_"+str(robotsNumber_percent[j])+"_"+str(discs[k])+".txt", cell_capacity, method, resource_management)
+    a = time.process_time()
+    results = manager.manage()
+    b = time.process_time()
+    c = int((b - a)*1000000)
+    with open("results/results_grid"+str(gridSize_x[i])+"_"+str(gridSize_y[i])+"_"+str(robotsNumber_percent[j])+"_"+str(discs[k])+"_" + str(cell_capacity) + str(method) + str(resource_management) +".txt", 'a') as f:
+        f.write(results + " " + str(c))
+        f.write("\n")
+    print("Done 4")
+
+    manager = Manager_goBack("results/grid_"+str(gridSize_x[i])+"_"+str(gridSize_y[i])+"_"+str(robotsNumber_percent[j])+"_"+str(discs[k])+".txt", cell_capacity, method, resource_management)
+    a = time.process_time()
+    results = manager.manage()
+    b = time.process_time()
+    c = int((b - a)*1000000)
+    with open("results/results_grid_goBack"+str(gridSize_x[i])+"_"+str(gridSize_y[i])+"_"+str(robotsNumber_percent[j])+"_"+str(discs[k])+"_" + str(cell_capacity) + str(method) + str(resource_management) +".txt", 'a') as f:
+        f.write(results + " " + str(c))
+        f.write("\n")
+    print("Done 5")
+
+    manager = Manager_goSide_Grid("results/grid_"+str(gridSize_x[i])+"_"+str(gridSize_y[i])+"_"+str(robotsNumber_percent[j])+"_"+str(discs[k])+".txt", cell_capacity, method, resource_management)
+    a = time.process_time()
+    results = manager.manage()
+    b = time.process_time()
+    c = int((b - a)*1000000)
+    with open("results/results_grid_goSide"+str(gridSize_x[i])+"_"+str(gridSize_y[i])+"_"+str(robotsNumber_percent[j])+"_"+str(discs[k])+"_" + str(cell_capacity) + str(method) + str(resource_management) +".txt", 'a') as f:
+        f.write(results + " " + str(c))
+        f.write("\n")
+    print("Done 6")
+    
 if __name__ == '__main__':
-    # file_name, cell_capacity, 0[euklidian] or 1[Manhattan], resources management 1[on] 0[off]
-    # manager = Manager("grid2.txt", 1, 0, 0)
-    # print(manager.manage())
+    number = 0
+    for i in range(0, len(gridSize_x)):
+        for j in range(0, len(robotsNumber_percent)):
+            for k in range(0, len(discs)):
+                for _ in range(0, 1):
+                    runTest(1, 0, 0)
+                    print("")
+                    runTest(1, 0, 1)
+                    print("")
+                    runTest(2, 0, 1)
+                    print("")
+                    runTest(1, 1, 0)
+                    print("")
+                    runTest(1, 1, 1)
+                    print("")
+                    runTest(2, 1, 1)
+                    print("")
+                    runTest_grid(1, 1, 0)
+                    print("")
+                    runTest_grid(1, 1, 1)
+                    print("")
+                    runTest_grid(2, 1, 1)
+                    print("")
 
-    for i in range(0,10):
-        print("Start")
-        a = datetime.datetime.now()
-        manager = Manager("generated/generated_"+str(i)+".txt", 1, 0, 0)
-        results = manager.manage()
-        b = datetime.datetime.now()
-        c = b - a
-        with open("results/generated_100.txt", 'a') as f:
-            f.write(results + " " + str(c.microseconds))
-            f.write("\n")
-        print("1 Done")
-        a = datetime.datetime.now()
-        manager = Manager("generated/generated_"+str(i)+".txt", 1, 0, 1)
-        results = manager.manage()
-        b = datetime.datetime.now()
-        c = b - a
-        with open("results/generated_101.txt", 'a') as f:
-            f.write(results + " " + str(c.microseconds))
-            f.write("\n")
-        print("2 Done")
-        a = datetime.datetime.now()
-        manager = Manager("generated/generated_"+str(i)+".txt", 2, 0, 1)
-        results = manager.manage()
-        b = datetime.datetime.now()
-        c = b - a
-        with open("results/generated_201.txt", 'a') as f:
-            f.write(results + " " + str(c.microseconds))
-            f.write("\n")
-        print("3 Done")
-        a = datetime.datetime.now()
-        manager = Manager("generated/generated_"+str(i)+".txt", 1, 1, 0)
-        results = manager.manage()
-        b = datetime.datetime.now()
-        c = b - a
-        with open("results/generated_110.txt", 'a') as f:
-            f.write(results + " " + str(c.microseconds))
-            f.write("\n")
-        print("4 Done")
-        a = datetime.datetime.now()
-        manager = Manager("generated/generated_"+str(i)+".txt", 1, 1, 1)
-        results = manager.manage()
-        b = datetime.datetime.now()
-        c = b - a
-        with open("results/generated_111.txt", 'a') as f:
-            f.write(results + " " + str(c.microseconds))
-            f.write("\n")
-        print("5 Done")
-        a = datetime.datetime.now()
-        manager = Manager("generated/generated_"+str(i)+".txt", 2, 1, 1)
-        results = manager.manage()
-        b = datetime.datetime.now()
-        c = b - a
-        with open("results/generated_211.txt", 'a') as f:
-            f.write(results + " " + str(c.microseconds))
-            f.write("\n")
-        print("6 Done")
-        print("___ Done " + str(i) + " ___")
-
-    # for i in range(0,10):
-        # print("Start")
-        # a = datetime.datetime.now()
-        # manager = Manager("generatedCells/generatedCells_"+str(i)+".txt", 1, 1, 0)
-        # results = manager.manage()
-        # b = datetime.datetime.now()
-        # c = b - a
-        # with open("results/generated_100.txt", 'a') as f:
-        #     f.write(results + " " + str(c.microseconds))
-        #     f.write("\n")
-        # print("1 Done")
-        # a = datetime.datetime.now()
-        # manager = Manager("generatedCells/generatedCells_"+str(i)+".txt", 1, 1, 1)
-        # results = manager.manage()
-        # b = datetime.datetime.now()
-        # c = b - a
-        # with open("results/generated_100.txt", 'a') as f:
-        #     f.write(results + " " + str(c.microseconds))
-        #     f.write("\n")
-        # print("1 Done")
-        # a = datetime.datetime.now()
-        # manager = Manager("generatedCells/generatedCells_"+str(i)+".txt", 2, 1, 1)
-        # results = manager.manage()
-        # b = datetime.datetime.now()
-        # c = b - a
-        # with open("results/generated_100.txt", 'a') as f:
-        #     f.write(results + " " + str(c.microseconds))
-        #     f.write("\n")
-        # print("1 Done")
-    exit()
+                    print("___ Done " + str(number) + str(" [") + str(gridSize_x[i]) + "_" + str(robotsNumber_percent[j]) + "_" + str(discs[k]) + str("]") + " ___")
+                    print("")
+                    number += 1

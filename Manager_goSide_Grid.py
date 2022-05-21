@@ -15,15 +15,15 @@ import numpy
 import random
 import numpy as np
 
-class Manager_goBack:
+class Manager_goSide_Grid:
     grid: Grid
     robots: list
     colors: list
     cell_capacity: int
     method: int
     resources_management:int
-    ended = 0
     blocked = 0
+    ended = 0
 
     def __init__(self, file, cell_capacity, method, resources_management):
         self.cell_capacity = cell_capacity
@@ -32,7 +32,7 @@ class Manager_goBack:
         self.grid, self.robots = self.readConfiguration(file)
         self.addRobotsToGrid()
         self.findShortestPath()
-        self.colorsGenerator()
+        # self.colorsGenerator()
 
 
 
@@ -177,7 +177,7 @@ class Manager_goBack:
             new_point = robot.calculateMove(self.method)
             if len(robot.path) == 0:
                 self.grid.removeRobotPosition(robot)
-                self.colors.pop(i)
+                # self.colors.pop(i)
                 self.robots.remove(robot)
                 self.ended += 1
             else:
@@ -188,18 +188,28 @@ class Manager_goBack:
                     blocked += 1
                     if robot.blocked > numpy.random.randint(5,25):
                         robot.blocked = 0
-                        if robot.isGoingBack:
+                        if robot.isGoingBack and robot.isGoingBackInTwoSteps and robot.isGoingLeft:
+                            robot.removePoint()
                             robot.removePoint()
                             robot.isGoingBack = False
+                            robot.isGoingBackInTwoSteps = False
                         else:
-                            robot.goBack(self.method, math.floor((random.randint(15, 25)/10) * self.grid.cell_size))
+                            robot.changeSideGrid(self.grid.cell_size)
                             if not self.grid.isCorrectPoint(robot):
                                 robot.removePoint()
-                                robot.isGoingBack = False
-        if blocked == len(self.robots):
-            self.blocked += 1
-            if self.blocked >= 1000:
-                return str(self.ended) + " " + str(len(self.robots))
+                                if not robot.isGoingBackInTwoSteps:
+                                    robot.isGoingBack = False
+                                else:
+                                    robot.removePoint()
+                                    robot.isGoingBack = False
+                                    robot.isGoingBackInTwoSteps = False
+                            if len(robot.path) > 1 and not self.grid.isCorrectPointTwo(robot):
+                                robot.removePointTwo()
+                                robot.isGoingBackInTwoSteps = False
+            if robot.sameSizeNumber >= 2:
+                self.blocked += 1
+        if self.blocked == len(self.robots):
+            return str(self.ended) + " " + str(len(self.robots))
         else:
             self.blocked = 0
         return "ok"

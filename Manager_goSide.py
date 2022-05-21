@@ -11,8 +11,10 @@ from ortools.constraint_solver import routing_enums_pb2
 from ortools.constraint_solver import pywrapcp
 import matplotlib
 from matplotlib import pyplot as plt, patches
+from matplotlib.ticker import (AutoMinorLocator, MultipleLocator)
 import numpy
 import random
+import numpy as np
 
 class Manager_goSide:
     grid: Grid
@@ -31,7 +33,7 @@ class Manager_goSide:
         self.grid, self.robots = self.readConfiguration(file)
         self.addRobotsToGrid()
         self.findShortestPath()
-        self.colorsGenerator()
+        # self.colorsGenerator()
 
 
 
@@ -159,6 +161,8 @@ class Manager_goSide:
                 
 
     def manage(self):
+        # self.print()
+        # input()
         numberOfRobots = len(self.robots)
         while True:
             results = self.move()
@@ -168,12 +172,13 @@ class Manager_goSide:
                 return results
 
     def move(self):
-        self.print()
+        # self.print()
         blocked = 0
-        for robot in self.robots:
+        for i, robot in enumerate(self.robots):
             new_point = robot.calculateMove(self.method)
             if len(robot.path) == 0:
                 self.grid.removeRobotPosition(robot)
+                # self.colors.pop(i)
                 self.robots.remove(robot)
                 self.ended += 1
             else:
@@ -189,13 +194,20 @@ class Manager_goSide:
                         if not self.grid.isCorrectPoint(robot):
                             robot.removePoint()
                             robot.isGoingBack = 0
-        if blocked == len(self.robots):
-            self.blocked += 1
-            if self.blocked == 10:
-                return str(self.ended) + " " + str(len(self.robots))
+            if robot.sameSizeNumber >= 10:
+                self.blocked += 1
+        if self.blocked == len(self.robots):
+            return str(self.ended) + " " + str(len(self.robots))
         else:
             self.blocked = 0
         return "ok"
+        # if blocked == len(self.robots):
+        #     self.blocked += 1
+        #     if self.blocked >= 1000:
+        #         return str(self.ended) + " " + str(len(self.robots))
+        # else:
+        #     self.blocked = 0
+        # return "ok"
     
     def colorsGenerator(self):
         self.colors = []
@@ -204,26 +216,30 @@ class Manager_goSide:
 
     def print(self):
         plt.clf()
-        plt.rcParams["figure.figsize"] = [self.grid.cell_size*self.grid.x_cells/1000, self.grid.cell_size*self.grid.y_cells/1000]
-        plt.rcParams["figure.autolayout"] = True
+        plt.rcParams["figure.autolayout"] = False
         fig = plt.figure(1)
+        fig.set_size_inches(10, 9)
         ax = fig.add_subplot(111)
-        # col = ("black", "white")
-        # i = 0
-        # for idx_x in range(0, self.grid.x_cells):
-        #     x = idx_x*self.grid.cell_size/1000
-        #     i += 1
-        #     i %= 2
-        #     j = i
-        #     for idx_y in range(0, self.grid.y_cells):
-        #         ax.add_patch(patches.Rectangle((x, idx_y*self.grid.cell_size/1000), self.grid.cell_size/1000, self.grid.cell_size/1000, color = col[j]))
-        #         j += 1
-        #         j %= 2
+        plt.autoscale(False, 'both')
         i = 0
+        # x = [-1, -1, 11, 11]
+        # y = [-1, 11, -1, 11]
+        # plt.scatter(x, y)
+        major_ticks = np.arange(0, self.grid.x_cells*self.grid.cell_size/2000+self.grid.cell_size/2000, self.grid.x_cells*self.grid.cell_size/2000)
+        minor_ticks = np.arange(0, self.grid.y_cells*self.grid.cell_size/2000+self.grid.cell_size/2000, self.grid.y_cells*self.grid.cell_size/2000)
+        # major_ticks = np.arange(0, self.grid.x_cells*self.grid.cell_size/2000+self.grid.cell_size/2000, self.grid.cell_size/2000)
+        # minor_ticks = np.arange(0, self.grid.y_cells*self.grid.cell_size/2000+self.grid.cell_size/2000, self.grid.cell_size/2000)
+
+        ax.set_xticks(major_ticks)
+        ax.set_xticks(minor_ticks, minor=True)
+        ax.set_yticks(major_ticks)
+        ax.set_yticks(minor_ticks, minor=True)
+        ax.set_axisbelow(True)
+        ax.grid()
         for robot in self.robots:
-            ax.add_patch(patches.Circle((robot.position_x/1000, robot.position_y/1000), radius=robot.size/2000, color=self.colors[i]))
+            ax.add_patch(patches.Circle((robot.position_x/2000, robot.position_y/2000), radius=robot.size/4000, color=self.colors[i]))
             for point in robot.path:
-                ax.add_patch(patches.Circle((point.x/1000, point.y/1000), radius=0.1, color=self.colors[i]))
+                ax.add_patch(patches.Circle((point.x/2000, point.y/2000), radius=0.05, color=self.colors[i]))
             i += 1
         plt.axis('equal')
         plt.draw()

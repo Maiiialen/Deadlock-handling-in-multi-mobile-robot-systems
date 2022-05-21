@@ -136,3 +136,9 @@ class Grid:
             if robot.path[0].y > 0 and robot.path[0].y/self.cell_size < self.y_cells:
                 return True
         return False
+
+    def isCorrectPointTwo(self, robot):
+        if robot.path[1].x > 0 and robot.path[1].x/self.cell_size < self.x_cells:
+            if robot.path[1].y > 0 and robot.path[1].y/self.cell_size < self.y_cells:
+                return True
+        return False
