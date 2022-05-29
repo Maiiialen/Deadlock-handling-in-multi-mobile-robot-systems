@@ -1,7 +1,7 @@
 # folders
-generated/
-generatedCells/
+configurations/
 results/
+ended_results/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

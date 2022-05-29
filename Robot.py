@@ -250,7 +250,6 @@ class Robot:
 
     def goToCenter(self, cellSize):
             self.isGoingBack = True
-            self.isGoingBackInTwoSteps = True
             if abs(self.position_x - self.path[0].x) != 0:
                 if self.path[0].x - self.position_x < 0:
                     if self.position_x%cellSize < 0.5*cellSize:
@@ -276,6 +275,7 @@ class Robot:
             self.path.insert(0, new_pos)
 
     def goLeftFromPath(self, cellSize):
+        self.isGoingBackInTwoSteps = True
         self.isGoingLeft = 1
         if abs(self.position_x - self.path[0].x) != 0:
             if self.path[0].x - self.position_x < 0:
@@ -291,6 +291,7 @@ class Robot:
         return True
 
     def goRightFromPath(self, cellSize):
+        self.isGoingBackInTwoSteps = True
         self.isGoingLeft = 0
         if abs(self.position_x - self.path[0].x) != 0:
             if self.path[0].x - self.position_x < 0:
@@ -314,7 +315,6 @@ class Robot:
             self.isGoingBack = False
         if int(self.position_x%cellSize) - cellSize//2 != 0 or int(self.position_y%cellSize) - cellSize//2 != 0:
             self.goToCenter(cellSize)
-            self.isGoingBackInTwoSteps = True
         if not self.isGoingLeft:
             self.goLeftFromPath(cellSize)
         else:

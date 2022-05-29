@@ -1,17 +1,12 @@
 from re import I, S
-from turtle import delay
 from Point import Point
 from Robot import Robot
 from Grid import Grid
 import math
 import copy
-from xml.etree.ElementTree import iselement
-import matplotlib.pyplot as plt
 from ortools.constraint_solver import routing_enums_pb2
 from ortools.constraint_solver import pywrapcp
-import matplotlib
 from matplotlib import pyplot as plt, patches
-import numpy
 import random
 import numpy as np
 
@@ -24,12 +19,14 @@ class Manager_goBack:
     resources_management:int
     ended = 0
     blocked = 0
+    visualization = 0
 
-    def __init__(self, file, cell_capacity, method, resources_management):
+    def __init__(self, file, cell_capacity, method, resources_management, visualization):
         self.cell_capacity = cell_capacity
         self.method = method
         self.resources_management = resources_management
         self.grid, self.robots = self.readConfiguration(file)
+        self.visualization = visualization
         self.addRobotsToGrid()
         self.findShortestPath()
         self.colorsGenerator()
@@ -171,7 +168,8 @@ class Manager_goBack:
                 return results
 
     def move(self):
-        # self.print()
+        if self.visualization:
+            self.print()
         blocked = 0
         for i, robot in enumerate(self.robots):
             new_point = robot.calculateMove(self.method)
@@ -186,7 +184,8 @@ class Manager_goBack:
                 else:
                     robot.blocked += 1
                     blocked += 1
-                    if robot.blocked > numpy.random.randint(5,25):
+                    robot.sameSizeNumber += 1
+                    if robot.blocked > np.random.randint(5,25):
                         robot.blocked = 0
                         if robot.isGoingBack:
                             robot.removePoint()
@@ -196,10 +195,10 @@ class Manager_goBack:
                             if not self.grid.isCorrectPoint(robot):
                                 robot.removePoint()
                                 robot.isGoingBack = False
-        if blocked == len(self.robots):
-            self.blocked += 1
-            if self.blocked >= 1000:
-                return str(self.ended) + " " + str(len(self.robots))
+            if robot.sameSizeNumber >= 50:
+                self.blocked += 1
+        if self.blocked == len(self.robots):
+            return str(self.ended) + " " + str(len(self.robots))
         else:
             self.blocked = 0
         return "ok"
@@ -207,7 +206,7 @@ class Manager_goBack:
     def colorsGenerator(self):
         self.colors = []
         for _ in self.robots:
-            self.colors.append(numpy.random.rand(3,))
+            self.colors.append(np.random.rand(3,))
 
     def print(self):
         plt.clf()
@@ -215,22 +214,20 @@ class Manager_goBack:
         fig = plt.figure(1)
         fig.set_size_inches(10, 9)
         ax = fig.add_subplot(111)
-        plt.autoscale(False, 'both')
-        i = 0
-        x = [-1, -1, 11, 11]
-        y = [-1, 11, -1, 11]
-        plt.scatter(x, y)
-        # major_ticks = np.arange(0, self.grid.x_cells*self.grid.cell_size/2000+self.grid.cell_size/2000, self.grid.x_cells*self.grid.cell_size/2000)
-        # minor_ticks = np.arange(0, self.grid.y_cells*self.grid.cell_size/2000+self.grid.cell_size/2000, self.grid.y_cells*self.grid.cell_size/2000)
+        x = [-self.grid.cell_size/2000, -self.grid.cell_size/2000, self.grid.x_cells*self.grid.cell_size/2000+self.grid.cell_size/2000, self.grid.x_cells*self.grid.cell_size/2000+self.grid.cell_size/2000]
+        y = [-self.grid.cell_size/2000, self.grid.y_cells*self.grid.cell_size/2000+self.grid.cell_size/2000, -self.grid.cell_size/2000, self.grid.y_cells*self.grid.cell_size/2000+self.grid.cell_size/2000]
+        plt.scatter(x, y, c=["white", "white", "white", "white"])
+
         major_ticks = np.arange(0, self.grid.x_cells*self.grid.cell_size/2000+self.grid.cell_size/2000, self.grid.cell_size/2000)
         minor_ticks = np.arange(0, self.grid.y_cells*self.grid.cell_size/2000+self.grid.cell_size/2000, self.grid.cell_size/2000)
-
         ax.set_xticks(major_ticks)
         ax.set_xticks(minor_ticks, minor=True)
         ax.set_yticks(major_ticks)
         ax.set_yticks(minor_ticks, minor=True)
         ax.set_axisbelow(True)
         ax.grid()
+
+        i = 0
         for robot in self.robots:
             ax.add_patch(patches.Circle((robot.position_x/2000, robot.position_y/2000), radius=robot.size/4000, color=self.colors[i]))
             for point in robot.path:
@@ -247,9 +244,7 @@ def create_data_model(robot:Robot):
     data['locations'] = []
     path = robot.path
     for point1 in path:
-       # point1.printp()
         data['locations'].append((point1.x, point1.y))
-    # print(data)
 
     data['num_vehicles'] = 1
     data['depot'] = 0

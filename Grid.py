@@ -1,8 +1,4 @@
-from types import CellType
-import copy
-from Robot import Robot
 from Point import Point
-from sympy import FallingFactorial
 
 
 class Grid:
@@ -99,6 +95,7 @@ class Grid:
             x -= 1
         if not y < self.y_cells:
             y -= 1
+        # print("x: " + str(x) + ", y: " + str(y))
         self.grid[x][y] -= 1
         if robot.position_x < x*self.cell_size + robot.size//2 and x > 0:
             self.grid[x-1][y] -= 1

@@ -1,17 +1,12 @@
 from re import I, S
-from turtle import delay
 from Point import Point
 from Robot import Robot
 from Grid import Grid
 import math
 import copy
-from xml.etree.ElementTree import iselement
-import matplotlib.pyplot as plt
-from ortools.constraint_solver import routing_enums_pb2
-from ortools.constraint_solver import pywrapcp
-import matplotlib
+from ortools.constraint_solver import routing_enums_pb2, pywrapcp
 from matplotlib import pyplot as plt, patches
-import numpy
+import numpy as np
 
 class Manager:
     grid: Grid
@@ -21,15 +16,17 @@ class Manager:
     method: int
     resources_management:int
     ended = 0
+    visualization = 0
 
-    def __init__(self, file, cell_capacity, method, resources_management):
+    def __init__(self, file, cell_capacity, method, resources_management, visualization):
         self.cell_capacity = cell_capacity
         self.method = method
         self.resources_management = resources_management
         self.grid, self.robots = self.readConfiguration(file)
+        self.visualization = visualization
         self.addRobotsToGrid()
         self.findShortestPath()
-        # self.colorsGenerator()
+        self.colorsGenerator()
 
 
 
@@ -166,12 +163,14 @@ class Manager:
                 return results
 
     def move(self):
-        # self.print()
+        if self.visualization:
+            self.print()
         blocked = 0
-        for robot in self.robots:
+        for i, robot in enumerate(self.robots):
             new_point = robot.calculateMove(self.method)
             if len(robot.path) == 0:
                 self.grid.removeRobotPosition(robot)
+                self.colors.pop(i)
                 self.robots.remove(robot)
                 self.ended += 1
             else:
@@ -186,30 +185,33 @@ class Manager:
     def colorsGenerator(self):
         self.colors = []
         for _ in self.robots:
-            self.colors.append(numpy.random.rand(3,))
+            self.colors.append(np.random.rand(3,))
 
     def print(self):
         plt.clf()
         plt.rcParams["figure.figsize"] = [self.grid.cell_size*self.grid.x_cells/1000, self.grid.cell_size*self.grid.y_cells/1000]
         plt.rcParams["figure.autolayout"] = True
         fig = plt.figure(1)
+        fig.set_size_inches(10, 9)
         ax = fig.add_subplot(111)
-        # col = ("black", "white")
-        # i = 0
-        # for idx_x in range(0, self.grid.x_cells):
-        #     x = idx_x*self.grid.cell_size/1000
-        #     i += 1
-        #     i %= 2
-        #     j = i
-        #     for idx_y in range(0, self.grid.y_cells):
-        #         ax.add_patch(patches.Rectangle((x, idx_y*self.grid.cell_size/1000), self.grid.cell_size/1000, self.grid.cell_size/1000, color = col[j]))
-        #         j += 1
-        #         j %= 2
+        x = [-self.grid.cell_size/2000, -self.grid.cell_size/2000, self.grid.x_cells*self.grid.cell_size/2000+self.grid.cell_size/2000, self.grid.x_cells*self.grid.cell_size/2000+self.grid.cell_size/2000]
+        y = [-self.grid.cell_size/2000, self.grid.y_cells*self.grid.cell_size/2000+self.grid.cell_size/2000, -self.grid.cell_size/2000, self.grid.y_cells*self.grid.cell_size/2000+self.grid.cell_size/2000]
+        plt.scatter(x, y, c=["white", "white", "white", "white"])
+
+        major_ticks = np.arange(0, self.grid.x_cells*self.grid.cell_size/2000+self.grid.cell_size/2000, self.grid.cell_size/2000)
+        minor_ticks = np.arange(0, self.grid.y_cells*self.grid.cell_size/2000+self.grid.cell_size/2000, self.grid.cell_size/2000)
+        ax.set_xticks(major_ticks)
+        ax.set_xticks(minor_ticks, minor=True)
+        ax.set_yticks(major_ticks)
+        ax.set_yticks(minor_ticks, minor=True)
+        ax.set_axisbelow(True)
+        ax.grid()
+
         i = 0
         for robot in self.robots:
-            ax.add_patch(patches.Circle((robot.position_x/1000, robot.position_y/1000), radius=robot.size/2000, color=self.colors[i]))
+            ax.add_patch(patches.Circle((robot.position_x/2000, robot.position_y/2000), radius=robot.size/4000, color=self.colors[i]))
             for point in robot.path:
-                ax.add_patch(patches.Circle((point.x/1000, point.y/1000), radius=0.1, color=self.colors[i]))
+                ax.add_patch(patches.Circle((point.x/2000, point.y/2000), radius=0.1, color=self.colors[i]))
             i += 1
         plt.axis('equal')
         plt.draw()
@@ -222,9 +224,7 @@ def create_data_model(robot:Robot):
     data['locations'] = []
     path = robot.path
     for point1 in path:
-       # point1.printp()
         data['locations'].append((point1.x, point1.y))
-    # print(data)
 
     data['num_vehicles'] = 1
     data['depot'] = 0
