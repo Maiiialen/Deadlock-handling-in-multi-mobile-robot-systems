@@ -1,11 +1,9 @@
-from re import I, S
 from Point import Point
 from Robot import Robot
 from Grid import Grid
 import math
 import copy
-from ortools.constraint_solver import routing_enums_pb2
-from ortools.constraint_solver import pywrapcp
+from ortools.constraint_solver import routing_enums_pb2, pywrapcp
 from matplotlib import pyplot as plt, patches
 import numpy as np
 
@@ -204,7 +202,7 @@ class Manager_goSide_Grid:
                             if len(robot.path) > 1 and not self.grid.isCorrectPointTwo(robot):
                                 robot.removePointTwo()
                                 robot.isGoingBackInTwoSteps = False
-            if robot.sameSizeNumber >= 50:
+            if robot.sameSizeNumber >= 100:
                 self.blocked += 1
         numOfRobots = len(self.robots)
         if self.blocked == numOfRobots:

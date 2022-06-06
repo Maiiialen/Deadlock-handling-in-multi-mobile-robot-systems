@@ -1,11 +1,9 @@
-from re import I, S
 from Point import Point
 from Robot import Robot
 from Grid import Grid
 import math
 import copy
-from ortools.constraint_solver import routing_enums_pb2
-from ortools.constraint_solver import pywrapcp
+from ortools.constraint_solver import routing_enums_pb2, pywrapcp
 from matplotlib import pyplot as plt, patches
 import random
 import numpy as np
@@ -192,7 +190,7 @@ class Manager_goSide:
                         if not self.grid.isCorrectPoint(robot):
                             robot.removePoint()
                             robot.isGoingBack = 0
-            if robot.sameSizeNumber >= 50:
+            if robot.sameSizeNumber >= 10000:
                 self.blocked += 1
         if self.blocked == len(self.robots):
             return str(self.ended) + " " + str(len(self.robots))

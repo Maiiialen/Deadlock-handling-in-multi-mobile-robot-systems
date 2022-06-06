@@ -1,4 +1,3 @@
-from re import I, S
 from Point import Point
 from Robot import Robot
 from Grid import Grid
