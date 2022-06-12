@@ -193,7 +193,7 @@ class Manager_goBack:
                             if not self.grid.isCorrectPoint(robot):
                                 robot.removePoint()
                                 robot.isGoingBack = False
-            if robot.sameSizeNumber >= 10000:
+            if robot.sameSizeNumber >= 1000:
                 self.blocked += 1
         if self.blocked == len(self.robots):
             return str(self.ended) + " " + str(len(self.robots))

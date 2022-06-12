@@ -1,10 +1,8 @@
-import random
-import math
-
-from numpy import correlate, greater
 from Point import Point
 from Grid import Grid
 from Robot import Robot
+import random
+import math
 
 cell_size = 2000
 velocity = []
@@ -110,11 +108,11 @@ def generatorCells(file, gridSize_x, gridSize_y, robotsNumber_percent, discs):
 
 # gridSize_x = [100]
 # gridSize_y = [100]
-robotsNumber_percent = [5, 10]
+robotsNumber_percent = [2, 7]
 # gridSize_x = [10, 50, 100, 20, 100, 40, 80]
 # gridSize_y = [10, 50, 100, 100, 20, 80, 40]
-gridSize_x = [10, 50, 100]
-gridSize_y = [10, 50, 100]
+gridSize_x = [10, 20, 30, 40, 50, 60, 70]
+gridSize_y = [10, 20, 30, 40, 50, 60, 70]
 # robotsNumber_percent = [5, 10, 15, 20]
 discs = [3, 8]
 
@@ -123,7 +121,7 @@ for i in range(0, len(gridSize_x)):
         for k in range(0, len(discs)):
             generator("configurations/free_"+str(gridSize_x[i])+"_"+str(gridSize_y[i])+"_"+str(robotsNumber_percent[j])+"_"+str(discs[k])+".txt", gridSize_x[i], gridSize_y[i], robotsNumber_percent[j], discs[k])
 
-# for i in range(0, len(gridSize_x)):
-#     for j in range(0, len(robotsNumber_percent)):
-#         for k in range(0, len(discs)):
-#             generatorCells("configurations/grid_"+str(gridSize_x[i])+"_"+str(gridSize_y[i])+"_"+str(robotsNumber_percent[j])+"_"+str(discs[k])+".txt", gridSize_x[i], gridSize_y[i], robotsNumber_percent[j], discs[k])
+for i in range(0, len(gridSize_x)):
+    for j in range(0, len(robotsNumber_percent)):
+        for k in range(0, len(discs)):
+            generatorCells("configurations/grid_"+str(gridSize_x[i])+"_"+str(gridSize_y[i])+"_"+str(robotsNumber_percent[j])+"_"+str(discs[k])+".txt", gridSize_x[i], gridSize_y[i], robotsNumber_percent[j], discs[k])

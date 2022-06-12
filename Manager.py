@@ -154,6 +154,9 @@ class Manager:
 
     def manage(self):
         numberOfRobots = len(self.robots)
+        if self.visualization:
+            self.print()
+            input()
         while True:
             results = self.move()
             if len(self.robots) == 0:

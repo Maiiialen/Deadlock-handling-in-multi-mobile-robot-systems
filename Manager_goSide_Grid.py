@@ -202,7 +202,7 @@ class Manager_goSide_Grid:
                             if len(robot.path) > 1 and not self.grid.isCorrectPointTwo(robot):
                                 robot.removePointTwo()
                                 robot.isGoingBackInTwoSteps = False
-            if robot.sameSizeNumber >= 100:
+            if robot.sameSizeNumber >= 10000:
                 self.blocked += 1
         numOfRobots = len(self.robots)
         if self.blocked == numOfRobots:
