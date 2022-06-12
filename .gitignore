@@ -1,7 +1,7 @@
 # folders
-configurations/
-results/
 ended_results/
+finish_time/
+finish_percent/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
