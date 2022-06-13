@@ -5,8 +5,8 @@ from Manager_goSide import Manager_goSide
 from Manager_goSide_Grid import Manager_goSide_Grid
 from Manager_goBack import Manager_goBack
           
-gridSize_x = [60]
-gridSize_y = [60]
+gridSize_x = [50]
+gridSize_y = [50]
 
 # gridSize_x = [70]
 # gridSize_y = [70]
@@ -16,7 +16,7 @@ gridSize_y = [60]
 # gridSize_y = [10, 50, 100, 100, 20, 80, 40]
 robotsNumber_percent = [10]
 # robotsNumber_percent = [5, 10, 2, 7]
-discs = [3]
+discs = [8]
 
 
 # file_name, cell_capacity, 0[euklidian] or 1[Manhattan], resources management 1[on] 0[off], wizualization 1[on] 0[off]
@@ -88,7 +88,7 @@ if __name__ == '__main__':
     for i in range(0, len(gridSize_x)):
         for j in range(0, len(robotsNumber_percent)):
             for k in range(0, len(discs)):
-                for _ in range(0, 2):
+                for _ in range(0, 1):
                     print("_ Start " + str(number) + str(" [") + str(gridSize_x[i]) + "x" + str(gridSize_y[i]) + "_" + str(robotsNumber_percent[j]) + "_" + str(discs[k]) + str("]") + " ___")
                     print("")
 
@@ -102,6 +102,4 @@ if __name__ == '__main__':
                     runTest_grid(1, 1, 1)
                     runTest_grid(2, 1, 1)
 
-                    print("___ Done " + str(number) + str(" [") + str(gridSize_x[i]) + "x" + str(gridSize_y[i]) + "_" + str(robotsNumber_percent[j]) + "_" + str(discs[k]) + str("]") + " ___")
-                    print("")
                     number += 1
