@@ -1,9 +1,9 @@
 # gridSize_x = [10, 50, 100, 20, 100, 40, 80]
 # gridSize_y = [10, 50, 100, 100, 20, 80, 40]
-gridSize_x = [70]
-gridSize_y = [70]
-# gridSize_x = [10, 20, 30, 40, 50, 60, 70]
-# gridSize_y = [10, 20, 30, 40, 50, 60, 70]
+gridSize_x = [10, 20, 30, 40, 50, 60, 70]
+gridSize_y = [10, 20, 30, 40, 50, 60, 70]
+# gridSize_x = [70]
+# gridSize_y = [70]
 # robotsNumber_percent = [10]
 # discs = [3]
 robotsNumber_percent = [2, 5, 7, 10]
@@ -58,6 +58,10 @@ def compute(cell_capacity, method, resource_management):
             print("free " + str(x) + " " + str(gridSize_x[i]) + " " + str(gridSize_y[i]) + " " + str(robotsNumber_percent[j]) + " " + str(discs[k]) + " " + str(cell_capacity) + str(method) + str(resource_management) + 
                 " " + str(resultEnded) + " " + str(resultNotEnded) + " " + str(len(lines)) + " " + str(result_time) + " " + str(zeros) + "\n")
 
+        # if x == 2 and discs[k] == 3:
+        #     print("___ free " +str(gridSize_x[i]) + " " + str(robotsNumber_percent[j]) + " " + str(cell_capacity) + str(method) + str(resource_management) +  " " + 
+        #         " | " + str(len(lines)))
+
         if x == 1:
             with open("ended_results/ended_results_.txt", 'a') as f:
                 f.write(str(gridSize_x[i]) + " " + str(gridSize_y[i]) + " " + str(robotsNumber_percent[j]) + " " + str(discs[k]) + " " + str(cell_capacity) + str(method) + str(resource_management) + 
@@ -89,6 +93,10 @@ def compute_grid(cell_capacity, method, resource_management):
         if(len(lines) < 10):
             print("grid " + str(x) + " " + str(gridSize_x[i]) + " " + str(gridSize_y[i]) + " " + str(robotsNumber_percent[j]) + " " + str(discs[k]) + " " + str(cell_capacity) + str(method) + str(resource_management) + 
                 " " + str(resultEnded) + " " + str(resultNotEnded) + " " + str(len(lines)) + " " + str(result_time) + " " + str(zeros) + "\n")
+
+        # if x == 2:
+        #     print("___ grid " + str(gridSize_x[i]) + " " + str(robotsNumber_percent[j]) + " " + str(cell_capacity) + str(method) + str(resource_management) +  " " + 
+        #         " | " + str(len(lines)))
 
 
         if x == 1:
