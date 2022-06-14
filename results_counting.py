@@ -58,7 +58,7 @@ def compute(cell_capacity, method, resource_management):
             print("free " + str(x) + " " + str(gridSize_x[i]) + " " + str(gridSize_y[i]) + " " + str(robotsNumber_percent[j]) + " " + str(discs[k]) + " " + str(cell_capacity) + str(method) + str(resource_management) + 
                 " " + str(resultEnded) + " " + str(resultNotEnded) + " " + str(len(lines)) + " " + str(result_time) + " " + str(zeros) + "\n")
 
-        # if x == 2 and discs[k] == 3:
+        # if x == 2 and discs[k] == 3 and len(lines) < 70:
         #     print("___ free " +str(gridSize_x[i]) + " " + str(robotsNumber_percent[j]) + " " + str(cell_capacity) + str(method) + str(resource_management) +  " " + 
         #         " | " + str(len(lines)))
 
@@ -94,8 +94,8 @@ def compute_grid(cell_capacity, method, resource_management):
             print("grid " + str(x) + " " + str(gridSize_x[i]) + " " + str(gridSize_y[i]) + " " + str(robotsNumber_percent[j]) + " " + str(discs[k]) + " " + str(cell_capacity) + str(method) + str(resource_management) + 
                 " " + str(resultEnded) + " " + str(resultNotEnded) + " " + str(len(lines)) + " " + str(result_time) + " " + str(zeros) + "\n")
 
-        # if x == 2:
-        #     print("___ grid " + str(gridSize_x[i]) + " " + str(robotsNumber_percent[j]) + " " + str(cell_capacity) + str(method) + str(resource_management) +  " " + 
+        # if x == 2 and discs[k] == 3 and len(lines) < 70:
+        #     print("___ free " +str(gridSize_x[i]) + " " + str(robotsNumber_percent[j]) + " " + str(cell_capacity) + str(method) + str(resource_management) +  " " + 
         #         " | " + str(len(lines)))
 
 
