@@ -42,10 +42,10 @@ def couting(lines):
 
 def compute(cell_capacity, method, resource_management):
     for x in range(0, 3):
-        if x == 1:
+        if x == 0:
             with open("results/results_" + str(gridSize_x[i]) + "_" + str(gridSize_y[i]) + "_" + str(robotsNumber_percent[j]) + "_" + str(discs[k]) + "_" + str(cell_capacity) + str(method) + str(resource_management) + ".txt", 'r') as f:
                 lines = f.readlines()
-        elif x == 2:
+        elif x == 1:
             with open("results/results_goSide_" + str(gridSize_x[i]) + "_" + str(gridSize_y[i]) + "_" + str(robotsNumber_percent[j]) + "_" + str(discs[k]) + "_" + str(cell_capacity) + str(method) + str(resource_management) + ".txt", 'r') as f:
                 lines = f.readlines()
         else:
@@ -54,19 +54,19 @@ def compute(cell_capacity, method, resource_management):
 
         resultEnded, resultNotEnded, result_time, zeros = couting(lines)
 
-        if(len(lines) < 10):
-            print("free " + str(x) + " " + str(gridSize_x[i]) + " " + str(gridSize_y[i]) + " " + str(robotsNumber_percent[j]) + " " + str(discs[k]) + " " + str(cell_capacity) + str(method) + str(resource_management) + 
-                " " + str(resultEnded) + " " + str(resultNotEnded) + " " + str(len(lines)) + " " + str(result_time) + " " + str(zeros) + "\n")
+        # if(len(lines) < 10):
+        #     print("free " + str(x) + " " + str(gridSize_x[i]) + " " + str(gridSize_y[i]) + " " + str(robotsNumber_percent[j]) + " " + str(discs[k]) + " " + str(cell_capacity) + str(method) + str(resource_management) + 
+        #         " " + str(resultEnded) + " " + str(resultNotEnded) + " " + str(len(lines)) + " " + str(result_time) + " " + str(zeros) + "\n")
 
-        # if x == 2 and discs[k] == 3 and len(lines) < 70:
-        #     print("___ free " +str(gridSize_x[i]) + " " + str(robotsNumber_percent[j]) + " " + str(cell_capacity) + str(method) + str(resource_management) +  " " + 
-        #         " | " + str(len(lines)))
+        if x == 1 and discs[k] == 3 and len(lines) < 70:
+            print("___ free " +str(gridSize_x[i]) + " " + str(robotsNumber_percent[j]) + " " + str(cell_capacity) + str(method) + str(resource_management) +  " " + 
+                " | " + str(len(lines)))
 
-        if x == 1:
+        if x == 0:
             with open("ended_results/ended_results_.txt", 'a') as f:
                 f.write(str(gridSize_x[i]) + " " + str(gridSize_y[i]) + " " + str(robotsNumber_percent[j]) + " " + str(discs[k]) + " " + str(cell_capacity) + str(method) + str(resource_management) + 
                 " " + str(resultEnded) + " " + str(resultNotEnded) + " " + str(len(lines)) + " " + str(result_time) + " " + str(zeros) + "\n")
-        elif x == 2:
+        elif x == 1:
             with open("ended_results/ended_results_goSide_.txt", 'a') as f:
                 f.write(str(gridSize_x[i]) + " " + str(gridSize_y[i]) + " " + str(robotsNumber_percent[j]) + " " + str(discs[k]) + " " + str(cell_capacity) + str(method) + str(resource_management) + 
                 " " + str(resultEnded) + " " + str(resultNotEnded) + " " + str(len(lines)) + " " + str(result_time) + " " + str(zeros) + "\n")
@@ -78,10 +78,10 @@ def compute(cell_capacity, method, resource_management):
 
 def compute_grid(cell_capacity, method, resource_management):
     for x in range(0, 3):
-        if x == 1:
+        if x == 0:
             with open("results/results_grid_" + str(gridSize_x[i]) + "_" + str(gridSize_y[i]) + "_" + str(robotsNumber_percent[j]) + "_" + str(discs[k]) + "_" + str(cell_capacity) + str(method) + str(resource_management) + ".txt", 'r') as f:
                 lines = f.readlines()
-        elif x == 2:
+        elif x == 1:
             with open("results/results_grid_goSide_" + str(gridSize_x[i]) + "_" + str(gridSize_y[i]) + "_" + str(robotsNumber_percent[j]) + "_" + str(discs[k]) + "_" + str(cell_capacity) + str(method) + str(resource_management) + ".txt", 'r') as f:
                 lines = f.readlines()
         else:
@@ -90,20 +90,20 @@ def compute_grid(cell_capacity, method, resource_management):
 
         resultEnded, resultNotEnded, result_time, zeros = couting(lines)
 
-        if(len(lines) < 10):
-            print("grid " + str(x) + " " + str(gridSize_x[i]) + " " + str(gridSize_y[i]) + " " + str(robotsNumber_percent[j]) + " " + str(discs[k]) + " " + str(cell_capacity) + str(method) + str(resource_management) + 
-                " " + str(resultEnded) + " " + str(resultNotEnded) + " " + str(len(lines)) + " " + str(result_time) + " " + str(zeros) + "\n")
+        # if(len(lines) < 10):
+        #     print("grid " + str(x) + " " + str(gridSize_x[i]) + " " + str(gridSize_y[i]) + " " + str(robotsNumber_percent[j]) + " " + str(discs[k]) + " " + str(cell_capacity) + str(method) + str(resource_management) + 
+        #         " " + str(resultEnded) + " " + str(resultNotEnded) + " " + str(len(lines)) + " " + str(result_time) + " " + str(zeros) + "\n")
 
-        # if x == 2 and discs[k] == 3 and len(lines) < 70:
-        #     print("___ free " +str(gridSize_x[i]) + " " + str(robotsNumber_percent[j]) + " " + str(cell_capacity) + str(method) + str(resource_management) +  " " + 
-        #         " | " + str(len(lines)))
+        if x == 1 and discs[k] == 3 and len(lines) < 70:
+            print("___ grid " +str(gridSize_x[i]) + " " + str(robotsNumber_percent[j]) + " " + str(cell_capacity) + str(method) + str(resource_management) +  " " + 
+                " | " + str(len(lines)))
 
 
-        if x == 1:
+        if x == 0:
             with open("ended_results/ended_results_grid_.txt", 'a') as f:
                 f.write(str(gridSize_x[i]) + " " + str(gridSize_y[i]) + " " + str(robotsNumber_percent[j]) + " " + str(discs[k]) + " " + str(cell_capacity) + str(method) + str(resource_management) + 
                 " " + str(resultEnded) + " " + str(resultNotEnded) + " " + str(len(lines)) + " " + str(result_time) + " " + str(zeros) + "\n")
-        elif x == 2:
+        elif x == 1:
             with open("ended_results/ended_results_grid_goSide_.txt", 'a') as f:
                 f.write(str(gridSize_x[i]) + " " + str(gridSize_y[i]) + " " + str(robotsNumber_percent[j]) + " " + str(discs[k]) + " " + str(cell_capacity) + str(method) + str(resource_management) + 
                 " " + str(resultEnded) + " " + str(resultNotEnded) + " " + str(len(lines)) + " " + str(result_time) + " " + str(zeros) + "\n")
