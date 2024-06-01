@@ -1,6 +1,5 @@
 from Point import Point
 
-
 class Grid:
     x_cells: int
     y_cells: int

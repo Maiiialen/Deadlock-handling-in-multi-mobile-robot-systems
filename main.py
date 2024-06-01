@@ -4,16 +4,11 @@ from Manager import Manager
 from Manager_goSide import Manager_goSide
 from Manager_goSide_Grid import Manager_goSide_Grid
 from Manager_goBack import Manager_goBack
-          
-gridSize_x = [20]
-gridSize_y = [20]
-# gridSize_x = [10, 20, 30, 40, 50, 60, 70]
-# gridSize_y = [10, 20, 30, 40, 50, 60, 70]
-# gridSize_x = [10, 50, 100, 20, 100, 40, 80]
-# gridSize_y = [10, 50, 100, 100, 20, 80, 40]
-#robotsNumber_percent = [10]
-robotsNumber_percent = [5]
-discs = [3]
+
+gridSize_x = [10, 20, 30, 40, 50, 60, 70, 20, 100, 40, 80]
+gridSize_y = [10, 20, 30, 40, 50, 60, 70, 100, 20, 80, 20]
+robotsNumber_percent = [2, 5, 7, 10]
+discs = [3, 8]
 
 
 # file_name, cell_capacity, 0[euklidian] or 1[Manhattan], resources management 1[on] 0[off], wizualization 1[on] 0[off]

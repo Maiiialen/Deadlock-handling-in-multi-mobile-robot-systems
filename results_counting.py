@@ -1,11 +1,5 @@
-# gridSize_x = [10, 50, 100, 20, 100, 40, 80]
-# gridSize_y = [10, 50, 100, 100, 20, 80, 40]
-gridSize_x = [10, 20, 30, 40, 50, 60, 70]
-gridSize_y = [10, 20, 30, 40, 50, 60, 70]
-# gridSize_x = [70]
-# gridSize_y = [70]
-# robotsNumber_percent = [10]
-# discs = [3]
+gridSize_x = [10, 20, 30, 40, 50, 60, 70, 20, 100, 40, 80]
+gridSize_y = [10, 20, 30, 40, 50, 60, 70, 100, 20, 80, 20]
 robotsNumber_percent = [2, 5, 7, 10]
 discs = [3, 8]
 
